@@ -1,0 +1,281 @@
+openapi: 3.0.3
+info:
+  title: SIGAP UB API
+  version: 1.0.0
+  description: |
+    API Gateway SIGAP UB — autentikasi SIAM, asesmen psikologis
+    (PHQ-9, GAD-7, SRQ-20), triase klinis, dan pemesanan konseling.
+servers:
+  - url: http://localhost:3001
+    description: Local development server
+
+tags:
+  - name: Health
+  - name: Auth
+  - name: Assessments
+  - name: Triage
+  - name: Counseling
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    HealthResponse:
+      type: object
+      properties:
+        status: { type: string, example: ok }
+        timestamp: { type: integer, format: int64, example: 1748100000000 }
+
+    LoginRequest:
+      type: object
+      required: [nim, password]
+      properties:
+        nim: { type: string, example: "215150300111053" }
+        password: { type: string, example: "sigap123" }
+
+    LoginResponse:
+      type: object
+      properties:
+        token: { type: string }
+        user:
+          type: object
+          properties:
+            nim: { type: string }
+            nama: { type: string }
+            fakultas: { type: string }
+            role: { type: string, enum: [mahasiswa, konselor, admin] }
+
+    AssessmentSubmitRequest:
+      type: object
+      required: [type, answers]
+      properties:
+        type: { type: string, enum: [gad7, phq9, srq20] }
+        answers:
+          type: array
+          items: { type: integer, minimum: 0, maximum: 3 }
+
+    AssessmentRecord:
+      type: object
+      properties:
+        assessmentId: { type: string, format: uuid }
+        type: { type: string, enum: [gad7, phq9, srq20] }
+        score: { type: integer }
+        riskLevel: { type: string, enum: [rendah, sedang, tinggi, kritis] }
+        interpretation: { type: string }
+        createdAt: { type: string, format: date-time }
+
+    TriageRequest:
+      type: object
+      required: [phq9Score, gad7Score, srq20Score]
+      properties:
+        phq9Score: { type: integer, minimum: 0, maximum: 27 }
+        gad7Score: { type: integer, minimum: 0, maximum: 21 }
+        srq20Score: { type: integer, minimum: 0, maximum: 20 }
+
+    TriageResponse:
+      type: object
+      properties:
+        riskLevel: { type: string, enum: [rendah, sedang, tinggi, kritis] }
+        confidenceScore: { type: number, minimum: 0, maximum: 1 }
+        contributingFactors:
+          type: array
+          items:
+            type: object
+            properties:
+              instrument: { type: string }
+              level: { type: string }
+              score: { type: integer }
+
+    BookingRequest:
+      type: object
+      required: [date, time, category]
+      properties:
+        date: { type: string, format: date }
+        time: { type: string, example: "09:00 - 10:30 WIB" }
+        category: { type: string, example: "Kecemasan Akademik" }
+        notes: { type: string, nullable: true }
+
+    BookingResponse:
+      type: object
+      properties:
+        bookingId: { type: string, format: uuid }
+        status: { type: string, enum: [pending, confirmed, completed, cancelled] }
+        scheduledAt: { type: string }
+        category: { type: string }
+        notes: { type: string, nullable: true }
+        createdAt: { type: string, format: date-time }
+
+    ErrorResponse:
+      type: object
+      properties:
+        error: { type: string }
+
+paths:
+  /api/health:
+    get:
+      tags: [Health]
+      summary: Healthcheck
+      responses:
+        "200":
+          description: Backend hidup
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/HealthResponse' }
+
+  /api/auth/login:
+    post:
+      tags: [Auth]
+      summary: Login simulasi SSO SIAM UB
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/LoginRequest' }
+      responses:
+        "200":
+          description: Login berhasil
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LoginResponse' }
+        "400":
+          description: Body request tidak valid
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        "401":
+          description: Kredensial salah
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+
+  /api/auth/verify:
+    get:
+      tags: [Auth]
+      summary: Verifikasi token JWT aktif
+      security: [{ bearerAuth: [] }]
+      responses:
+        "200": { description: Token valid }
+        "401":
+          description: Token tidak valid atau kadaluarsa
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+
+  /api/assessments/submit:
+    post:
+      tags: [Assessments]
+      summary: Submit jawaban kuesioner asesmen
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AssessmentSubmitRequest' }
+      responses:
+        "201":
+          description: Asesmen tersimpan
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AssessmentRecord' }
+        "400":
+          description: Input tidak valid
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        "401":
+          description: Token tidak valid
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+
+  /api/assessments/history:
+    get:
+      tags: [Assessments]
+      summary: Riwayat asesmen user
+      security: [{ bearerAuth: [] }]
+      responses:
+        "200":
+          description: Daftar riwayat
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  history:
+                    type: array
+                    items: { $ref: '#/components/schemas/AssessmentRecord' }
+
+  /api/triage/classify:
+    post:
+      tags: [Triage]
+      summary: Klasifikasi risiko gabungan
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/TriageRequest' }
+      responses:
+        "200":
+          description: Hasil klasifikasi
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TriageResponse' }
+        "400":
+          description: Skor tidak valid
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+
+  /api/counseling/book:
+    post:
+      tags: [Counseling]
+      summary: Buat pemesanan sesi konseling
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/BookingRequest' }
+      responses:
+        "201":
+          description: Pemesanan tercatat
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/BookingResponse' }
+        "400":
+          description: Slot penuh atau body invalid
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        "404":
+          description: Slot tidak ditemukan
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+
+  /api/counseling/slots:
+    get:
+      tags: [Counseling]
+      summary: Daftar slot konseling tersedia
+      security: [{ bearerAuth: [] }]
+      responses:
+        "200":
+          description: Daftar slot
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  slots:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        date: { type: string, format: date }
+                        time: { type: string }
+                        available: { type: boolean }

@@ -1,0 +1,43 @@
+# ----- Dependencies -----
+node_modules/
+backend/node_modules/
+
+# ----- Build artifacts -----
+build/
+dist/
+backend/dist/
+coverage/
+*.tsbuildinfo
+
+# ----- Logs -----
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ----- Environment & secrets -----
+.env
+.env.local
+.env.*.local
+.env.production
+!.env.example
+
+# ----- OS junk -----
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ----- IDE / editor -----
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ----- Tooling local state -----
+.claude/
+.cursor/
+
+# ----- Docker volumes (mounted) -----
+postgres-data/
+redis-data/

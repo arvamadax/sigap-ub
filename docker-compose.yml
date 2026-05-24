@@ -1,0 +1,88 @@
+# SIGAP UB — Orkestrasi seluruh service untuk dijalankan lokal
+# Jalankan dengan: docker-compose up --build
+services:
+
+  # Frontend React + Vite (di-build menjadi static, disajikan oleh nginx)
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sigap_frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - sigap_net
+
+  # API Gateway + service Express
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: sigap_backend
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      PORT: ${PORT}
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: ${REDIS_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN}
+      FRONTEND_URL: ${FRONTEND_URL}
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - sigap_net
+
+  # PostgreSQL — penyimpanan utama (users, assessments, triage, bookings)
+  db:
+    image: postgres:15-alpine
+    container_name: sigap_db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - sigap_pgdata:/var/lib/postgresql/data
+      - ./docs/erd.sql:/docker-entrypoint-initdb.d/01-erd.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+    networks:
+      - sigap_net
+
+  # Redis — session cache & rate limit
+  redis:
+    image: redis:7-alpine
+    container_name: sigap_redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+    networks:
+      - sigap_net
+
+volumes:
+  sigap_pgdata:
+    name: sigap_pgdata
+
+networks:
+  sigap_net:
+    name: sigap_net
+    driver: bridge
