@@ -1,35 +1,48 @@
 {
-  "name": "react-example",
+  "name": "sigap-ub-frontend",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "SIGAP UB — Frontend React untuk sistem asesmen psikologis proaktif Universitas Brawijaya (PHQ-9, GAD-7, SRQ-20).",
   "type": "module",
+  "homepage": "https://github.com/arvamadax/sigap-ub#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/arvamadax/sigap-ub.git"
+  },
+  "bugs": {
+    "url": "https://github.com/arvamadax/sigap-ub/issues"
+  },
+  "license": "MIT",
+  "author": "Tim SIGAP UB (Arva Mada Jayastu, Farrel Arzaqia Mecca, Fristian Boas Nathaniel)",
+  "keywords": [
+    "tekra-2026",
+    "smart-campus",
+    "mental-health",
+    "universitas-brawijaya",
+    "phq-9",
+    "gad-7",
+    "srq-20",
+    "react",
+    "vite"
+  ],
   "scripts": {
     "dev": "vite --port=3000 --host=0.0.0.0",
     "build": "vite build",
     "preview": "vite preview",
-    "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit"
   },
   "dependencies": {
-    "@google/genai": "^1.29.0",
     "@tailwindcss/vite": "^4.1.14",
     "@vitejs/plugin-react": "^5.0.4",
-    "lucide-react": "^0.546.0",
     "react": "^19.0.1",
     "react-dom": "^19.0.1",
-    "vite": "^6.2.3",
-    "express": "^4.21.2",
-    "dotenv": "^17.2.3",
-    "motion": "^12.23.24"
+    "vite": "^6.2.3"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
     "autoprefixer": "^10.4.21",
     "esbuild": "^0.25.0",
     "tailwindcss": "^4.1.14",
-    "tsx": "^4.21.0",
-    "typescript": "~5.8.2",
-    "vite": "^6.2.3",
-    "@types/express": "^4.17.21"
+    "typescript": "~5.8.2"
   }
 }

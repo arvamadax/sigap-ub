@@ -1,0 +1,45 @@
+# Mencegah file lokal masuk ke Docker build context — mempercepat build dan
+# mengurangi ukuran image. Pola di sini berlaku untuk SEMUA Dockerfile
+# yang context-nya repo root (frontend Dockerfile).
+
+# Dependencies (akan di-install ulang dalam image)
+node_modules
+backend/node_modules
+
+# Build artifacts
+dist
+build
+backend/dist
+*.tsbuildinfo
+
+# Version control & worktree
+.git
+.gitignore
+.gitattributes
+.github
+.claude
+
+# IDE / editor
+.vscode
+.idea
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs & lokal
+*.log
+npm-debug.log*
+
+# Environment file lokal — JANGAN masuk image (compose lewat env_file/environment)
+.env
+.env.*
+!.env.example
+
+# Dokumentasi besar (tidak perlu di runtime image)
+docs
+notebooks
+README.md
+LICENSE
