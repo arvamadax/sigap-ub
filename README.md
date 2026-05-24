@@ -141,7 +141,7 @@ DDL lengkap + indeks + seed contoh ada di [`docs/erd.sql`](docs/erd.sql).
 
 ```bash
 # 1. Clone repo
-git clone https://github.com/[username]/sigap-ub.git
+git clone https://github.com/arvamadax/sigap-ub.git
 cd sigap-ub
 
 # 2. Salin environment variables
