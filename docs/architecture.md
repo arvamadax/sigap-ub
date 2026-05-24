@@ -71,3 +71,46 @@ sequenceDiagram
 - **Pemisahan Service Logic** — masing-masing domain (auth,
   assessment, triage, scheduling) memiliki router Express terpisah
   agar mudah di-extract menjadi microservice di masa mendatang.
+
+## Panduan Demo & Screenshot
+
+Untuk presentasi TEKRA 2026, alur demo yang disarankan:
+
+1. **Buka Landing Page** (`http://localhost:3000`)
+   - Tunjukkan hero section + 3 instrumen klinis tervalidasi.
+   - Highlight badge "Sistem Skrining Terstandar WHO".
+
+2. **Login dengan akun demo**
+   - NIM: `215150300111053` / password: `sigap123`.
+   - Jelaskan bahwa pada produksi akan terintegrasi dengan SSO SIAM UB.
+
+3. **Jalankan Asesmen PHQ-9**
+   - Tunjukkan UI radio button yang fully accessible (keyboard navigable).
+   - Selesaikan 9 pertanyaan → tampilkan hasil klasifikasi.
+
+4. **Eksplorasi API Documentation** (`http://localhost:3001/api-docs`)
+   - Demo Swagger UI live untuk transparansi kontrak API.
+   - Tunjukkan response schema yang terstandar.
+
+5. **Tunjukkan Klasifikasi Triase**
+   - Buka `notebooks/triage_logic.md`.
+   - Walkthrough 3 skenario kasus dengan hasil deterministik.
+
+## Color Palette & Brand Tokens
+
+Token warna yang konsisten dipakai di seluruh aplikasi:
+
+| Token | Hex | Penggunaan |
+|---|---|---|
+| primary-teal | `#0D9488` | CTA, highlight, badge utama |
+| dark-teal | `#006565` | Hover state, accent depth |
+| bg-cream | `#FDFBF7` | Background utama, soft surface |
+| border-light | `#F0EBE2` | Border subtle, divider |
+| navy | `#081b3a` | Header modal, footer |
+| text-dark | `#1E293B` | Body text utama |
+| rose-600 | `#E11D48` | Error state, urgent alert |
+
+Pemilihan warna mengikuti prinsip *calming aesthetic* untuk konteks
+kesehatan mental — palette dominan hijau-teal dan krem yang
+terbukti menurunkan kecemasan visual saat user berinteraksi dengan
+form sensitif.
