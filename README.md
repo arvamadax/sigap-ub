@@ -295,9 +295,9 @@ sigap-ub/
 
 | Nama | NIM | Role |
 |---|---|---|
-| Arva Mada Jayastu | 255150300111053 | Ketua Tim / Frontend Developer |
+| Arva Mada Jayastu | 255150300111053 | Ketua Tim / Lead Developer |
 | Farrel Arzaqia Mecca | 255150301111027 | Backend Developer |
-| Fristian Boas Nathaniel | 25515030111106 | Desain & Dokumentasi |
+| Fristian Boas Nathaniel | 25515030111106 | Front End Developer |
 
 **Fakultas Ilmu Komputer, Universitas Brawijaya — 2026**
 
