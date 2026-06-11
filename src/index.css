@@ -5,29 +5,16 @@
   --font-display: "Montserrat", sans-serif;
 }
 
-/* ----- Landing hero floating cards ----- */
-@keyframes float1 {
-  0%, 100% { transform: translateY(0px) rotate(-3deg); }
-  50% { transform: translateY(-10px) rotate(-1deg); }
+/* ----- Logo marquee scroll ----- */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
-@keyframes float2 {
-  0%, 100% { transform: translateY(0px) rotate(5deg); }
-  50% { transform: translateY(-12px) rotate(3deg); }
+.animate-marquee {
+  display: flex;
+  animation: marquee 40s linear infinite;
+  width: max-content;
 }
-@keyframes float3 {
-  0%, 100% { transform: translateY(0px) rotate(2deg); }
-  50% { transform: translateY(-8px) rotate(0deg); }
-}
-@keyframes float4 {
-  0%, 100% { transform: translateY(0px) rotate(-5deg); }
-  50% { transform: translateY(-10px) rotate(-3deg); }
-}
-
-.animate-float-1 { animation: float1 6s ease-in-out infinite; }
-.animate-float-2 { animation: float2 7s ease-in-out infinite; }
-.animate-float-3 { animation: float3 5s ease-in-out infinite; }
-.animate-float-4 { animation: float4 8s ease-in-out infinite; }
-.float-shadow { box-shadow: 0 20px 40px -15px rgba(13, 148, 136, 0.1); }
 
 /* ----- Assessment radio selection pulse ----- */
 @keyframes scaleUp {
