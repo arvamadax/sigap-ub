@@ -37,6 +37,7 @@ desktop.ini
 # ----- Tooling local state -----
 .claude/
 .cursor/
+AUDIT_NOTES.md
 
 # ----- Docker volumes (mounted) -----
 postgres-data/

@@ -72,29 +72,21 @@ sequenceDiagram
   assessment, triage, scheduling) memiliki router Express terpisah
   agar mudah di-extract menjadi microservice di masa mendatang.
 
-## Panduan Demo & Screenshot
+## Alur Demo
 
-Untuk presentasi TEKRA 2026, alur demo yang disarankan:
+Alur demonstrasi fitur utama SIGAP UB:
 
-1. **Buka Landing Page** (`http://localhost:3000`)
-   - Tunjukkan hero section + 3 instrumen klinis tervalidasi.
-   - Highlight badge "Sistem Skrining Terstandar WHO".
+| Langkah | Halaman | Fitur yang Ditampilkan |
+|---------|---------|----------------------|
+| 1 | Landing Page | Hero section 3 instrumen klinis, badge WHO |
+| 2 | Login Mahasiswa | SSO simulasi (`arva@student.ub.ac.id` / `SIGAP-UB123`) |
+| 3 | Dashboard Mahasiswa | Profil, rekomendasi asesmen, riwayat kosong (fresh account) |
+| 4 | Asesmen PHQ-9 | UI kuesioner accessible, 9 pertanyaan, hasil klasifikasi |
+| 5 | Login Konselor | Tab terpisah (`konselor@ub.ac.id` / `SIGAP-UB123`) |
+| 6 | Dashboard Konselor | Triase mahasiswa, distribusi risiko, notifikasi |
+| 7 | API Docs | Swagger UI di `localhost:3001/api-docs` |
 
-2. **Login dengan akun demo**
-   - NIM: `215150300111053` / password: `sigap123`.
-   - Jelaskan bahwa pada produksi akan terintegrasi dengan SSO SIAM UB.
-
-3. **Jalankan Asesmen PHQ-9**
-   - Tunjukkan UI radio button yang fully accessible (keyboard navigable).
-   - Selesaikan 9 pertanyaan → tampilkan hasil klasifikasi.
-
-4. **Eksplorasi API Documentation** (`http://localhost:3001/api-docs`)
-   - Demo Swagger UI live untuk transparansi kontrak API.
-   - Tunjukkan response schema yang terstandar.
-
-5. **Tunjukkan Klasifikasi Triase**
-   - Buka `notebooks/triage_logic.md`.
-   - Walkthrough 3 skenario kasus dengan hasil deterministik.
+Pada produksi, login terintegrasi dengan SSO SIAM Universitas Brawijaya.
 
 ## Color Palette & Brand Tokens
 

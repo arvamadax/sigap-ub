@@ -169,12 +169,14 @@ npm install
 npm run dev
 ```
 
-### Kredensial Demo (mock)
+### Kredensial Demo
 
-| NIM | Password | Peran |
-|-----|----------|-------|
-| `215150300111053` | `sigap123` | Mahasiswa |
-| `215150301111027` | `sigap123` | Mahasiswa |
+| Email / NIM | Password | Peran |
+|-------------|----------|-------|
+| `arva@student.ub.ac.id` atau `255150300111053` | `SIGAP-UB123` | Mahasiswa |
+| `fristian@student.ub.ac.id` atau `25515030111106` | `SIGAP-UB123` | Mahasiswa |
+| `farrel@student.ub.ac.id` atau `255150301111027` | `SIGAP-UB123` | Mahasiswa |
+| `konselor@ub.ac.id` | `SIGAP-UB123` | Konselor |
 
 ---
 
@@ -258,19 +260,37 @@ sigap-ub/
 │   ├── architecture.md                ← arsitektur + sequence diagram
 │   ├── api-spec.yaml                  ← OpenAPI 3.0 spec
 │   └── erd.sql                        ← DDL + seed PostgreSQL
-├── src/                               ← frontend React (TIDAK DIUBAH)
-│   ├── App.tsx
+├── src/                               ← frontend React
+│   ├── App.tsx                        ← root component + routing + login modal
 │   ├── main.tsx
 │   ├── index.css
 │   ├── types.ts
+│   ├── services/
+│   │   ├── auth.ts                    ← autentikasi + akun demo
+│   │   └── storage.ts                 ← localStorage persistence layer
 │   ├── data/
+│   │   ├── assessments.ts             ← soal kuesioner PHQ-9, GAD-7, SRQ-20
+│   │   └── mockData.ts               ← data mock triase konselor
 │   └── components/
-│       ├── LandingView.tsx
-│       ├── DashboardView.tsx
-│       ├── AssessmentView.tsx
+│       ├── LandingView.tsx            ← halaman utama + hero cards
+│       ├── DashboardView.tsx          ← dashboard mahasiswa
+│       ├── AssessmentView.tsx         ← halaman pengisian kuesioner
+│       ├── KonselorView.tsx           ← dashboard konselor / triase
 │       ├── Icons.tsx
 │       ├── Toast.tsx
-│       └── ConfirmModal.tsx
+│       ├── ConfirmModal.tsx
+│       ├── dashboard/                 ← sub-komponen dashboard mahasiswa
+│       │   ├── SummaryBar.tsx
+│       │   ├── RecommendationCard.tsx
+│       │   ├── AssessmentGrid.tsx
+│       │   ├── ProfileCard.tsx
+│       │   ├── HistoryCard.tsx
+│       │   └── CounselingCard.tsx
+│       └── konselor/                  ← sub-komponen dashboard konselor
+│           ├── KonselorSummaryBar.tsx
+│           ├── TriaseTable.tsx
+│           ├── RisikoChart.tsx
+│           └── NotifikasiTriase.tsx
 ├── backend/
 │   ├── Dockerfile
 │   ├── package.json

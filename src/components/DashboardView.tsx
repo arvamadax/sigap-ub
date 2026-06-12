@@ -156,10 +156,13 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               Dashboard
             </button>
             <button
-              onClick={() => onSetView('konselor')}
+              onClick={() => {
+                const el = document.getElementById('assessment-section');
+                el?.scrollIntoView({ behavior: 'smooth' });
+              }}
               className="text-stone-500 hover:text-stone-900 font-medium text-sm px-3 py-2 rounded-lg hover:bg-stone-100 transition-colors"
             >
-              Konselor
+              Analisis
             </button>
             <button
               onClick={() => setIsGuideModalOpen(true)}
@@ -258,7 +261,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               />
             </section>
 
-            <section className="animate-fade-in-up animate-fade-in-up-delay-1">
+            <section id="assessment-section" className="animate-fade-in-up animate-fade-in-up-delay-1">
               <h2 className="text-[11px] uppercase tracking-[0.06em] text-stone-400 font-medium mb-2.5">
                 Asesmen tersedia
               </h2>
