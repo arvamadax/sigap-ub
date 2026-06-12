@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ViewType, HistoryItem, AssessmentType } from '../types';
-import { mockMahasiswa } from '../data/mockData';
+import { getSession } from '../services/auth';
 import { SummaryBar } from './dashboard/SummaryBar';
 import { RecommendationCard } from './dashboard/RecommendationCard';
 import { AssessmentGrid } from './dashboard/AssessmentGrid';
@@ -29,6 +29,11 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   onSelectAssessment,
   onLogout,
 }) => {
+  const currentSession = getSession();
+  const userName = currentSession?.nama ?? 'Mahasiswa UB';
+  const userNim = currentSession?.nim ?? '';
+  const userFakultas = currentSession?.fakultas ?? '';
+
   const [isGuideModalOpen, setIsGuideModalOpen] = useState(false);
   const [guideTab, setGuideTab] = useState<'alur' | 'privasi' | 'faq'>('alur');
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
@@ -188,13 +193,13 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
                 className="w-9 h-9 rounded-full bg-teal-700 flex items-center justify-center hover:ring-2 hover:ring-teal-200 transition-all"
               >
-                <span className="text-white font-bold text-sm">AM</span>
+                <span className="text-white font-bold text-sm">{userName.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase()}</span>
               </button>
               {isProfileDropdownOpen && (
                 <div role="menu" className="absolute right-0 top-12 w-52 bg-white border border-stone-200 shadow-lg rounded-xl py-1.5 z-50">
                   <div className="px-4 py-2.5 border-b border-stone-100">
-                    <p className="text-sm font-semibold text-stone-900">{mockMahasiswa.nama}</p>
-                    <p className="text-xs text-stone-500">{mockMahasiswa.nim} &middot; {mockMahasiswa.fakultas}</p>
+                    <p className="text-sm font-semibold text-stone-900">{userName}</p>
+                    <p className="text-xs text-stone-500">{userNim} &middot; {userFakultas}</p>
                   </div>
                   <button
                     role="menuitem"
@@ -228,8 +233,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         kondisi={getKondisiLevel()}
         asesmenSelesai={completedCount}
         asesmenTotal={3}
-        jadwalBerikutnya={mockMahasiswa.jadwalBerikutnya}
-        sesiKonseling={mockMahasiswa.sesiKonseling}
+        jadwalBerikutnya={null}
+        sesiKonseling={0}
         onScheduleCounseling={onOpenCounselorModal}
       />
 
@@ -259,7 +264,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               </h2>
               <AssessmentGrid
                 assessments={assessmentCards}
-                jadwalBerikutnya={mockMahasiswa.jadwalBerikutnya}
+                jadwalBerikutnya={null}
                 onSelectAssessment={onSelectAssessment}
               />
             </section>
@@ -268,13 +273,13 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           {/* Right Column — Sidebar */}
           <div className="lg:col-span-4 flex flex-col gap-4 animate-fade-in-up animate-fade-in-up-delay-2">
             <ProfileCard
-              nama={mockMahasiswa.nama}
-              nim={mockMahasiswa.nim}
-              fakultas={mockMahasiswa.fakultas}
+              nama={userName}
+              nim={userNim}
+              fakultas={userFakultas}
               risikoLevel={getKondisiLevel()}
               updatedDate={latestDate}
             />
-            <HistoryCard riwayat={mockMahasiswa.riwayat} />
+            <HistoryCard riwayat={[]} />
             <CounselingCard onOpenModal={onOpenCounselorModal} />
           </div>
         </div>

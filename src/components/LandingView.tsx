@@ -153,11 +153,12 @@ export const LandingView: React.FC<LandingViewProps> = ({
             </p>
           </div>
 
-          {/* 3 Assessment Cards */}
+          {/* 3 Assessment Cards — ordered by severity tone */}
           <div className="relative z-10 w-full max-w-5xl grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5">
+            {/* PHQ-9 — Depresi (merah, serius) */}
             <button
               onClick={handleStartAction}
-              className="group relative bg-teal-700 rounded-2xl p-7 text-left overflow-hidden hover:bg-teal-800 hover:-translate-y-1 active:scale-[0.98] transition-all duration-300 cursor-pointer min-h-[220px] md:min-h-[260px]"
+              className="group relative bg-rose-700 rounded-2xl p-7 text-left overflow-hidden hover:bg-rose-800 hover:-translate-y-1 active:scale-[0.98] transition-all duration-300 cursor-pointer min-h-[220px] md:min-h-[260px]"
             >
               <h3 className="font-display font-bold text-2xl md:text-3xl text-white mb-2 leading-tight">PHQ-9</h3>
               <div className="flex items-center gap-2 text-white/80 text-sm font-semibold group-hover:text-white group-hover:gap-3 transition-all duration-200">
@@ -171,9 +172,27 @@ export const LandingView: React.FC<LandingViewProps> = ({
               </div>
             </button>
 
+            {/* SRQ-20 — Skrining Umum (hijau/teal, ringan) */}
             <button
               onClick={handleStartAction}
-              className="group relative bg-teal-800 rounded-2xl p-7 text-left overflow-hidden hover:brightness-110 hover:-translate-y-1 active:scale-[0.98] transition-all duration-300 cursor-pointer min-h-[220px] md:min-h-[260px]"
+              className="group relative bg-teal-700 rounded-2xl p-7 text-left overflow-hidden hover:bg-teal-800 hover:-translate-y-1 active:scale-[0.98] transition-all duration-300 cursor-pointer min-h-[220px] md:min-h-[260px]"
+            >
+              <h3 className="font-display font-bold text-2xl md:text-3xl text-white mb-2 leading-tight">SRQ-20</h3>
+              <div className="flex items-center gap-2 text-white/80 text-sm font-semibold group-hover:text-white group-hover:gap-3 transition-all duration-200">
+                <span>Skrining Umum WHO</span>
+                <span className="inline-flex items-center justify-center w-6 h-6 rounded-full border border-white/40 text-white/70 text-xs group-hover:border-white group-hover:text-white transition-all">&rarr;</span>
+              </div>
+              <div className="absolute -bottom-10 -right-10 w-40 h-40 rounded-full bg-white/5 group-hover:bg-white/10 transition-colors duration-300" />
+              <div className="absolute -bottom-4 -right-4 w-24 h-24 rounded-full bg-white/5 group-hover:bg-white/10 transition-colors duration-300" />
+              <div className="absolute bottom-5 left-7">
+                <span className="text-[11px] font-bold text-white/40 uppercase tracking-widest">20 pertanyaan &middot; ~5 menit</span>
+              </div>
+            </button>
+
+            {/* GAD-7 — Kecemasan (amber/kuning, sedang) */}
+            <button
+              onClick={handleStartAction}
+              className="group relative bg-amber-700 rounded-2xl p-7 text-left overflow-hidden hover:bg-amber-800 hover:-translate-y-1 active:scale-[0.98] transition-all duration-300 cursor-pointer min-h-[220px] md:min-h-[260px]"
             >
               <h3 className="font-display font-bold text-2xl md:text-3xl text-white mb-2 leading-tight">GAD-7</h3>
               <div className="flex items-center gap-2 text-white/80 text-sm font-semibold group-hover:text-white group-hover:gap-3 transition-all duration-200">
@@ -184,22 +203,6 @@ export const LandingView: React.FC<LandingViewProps> = ({
               <div className="absolute -bottom-4 -right-4 w-24 h-24 rounded-full bg-white/5 group-hover:bg-white/10 transition-colors duration-300" />
               <div className="absolute bottom-5 left-7">
                 <span className="text-[11px] font-bold text-white/40 uppercase tracking-widest">7 pertanyaan &middot; ~2 menit</span>
-              </div>
-            </button>
-
-            <button
-              onClick={handleStartAction}
-              className="group relative bg-stone-800 rounded-2xl p-7 text-left overflow-hidden hover:brightness-125 hover:-translate-y-1 active:scale-[0.98] transition-all duration-300 cursor-pointer min-h-[220px] md:min-h-[260px] border border-white/10"
-            >
-              <h3 className="font-display font-bold text-2xl md:text-3xl text-white mb-2 leading-tight">SRQ-20</h3>
-              <div className="flex items-center gap-2 text-white/80 text-sm font-semibold group-hover:text-white group-hover:gap-3 transition-all duration-200">
-                <span>Skrining Umum WHO</span>
-                <span className="inline-flex items-center justify-center w-6 h-6 rounded-full border border-white/40 text-white/70 text-xs group-hover:border-white group-hover:text-white transition-all">&rarr;</span>
-              </div>
-              <div className="absolute -bottom-10 -right-10 w-40 h-40 rounded-full bg-teal-700/10 group-hover:bg-teal-700/20 transition-colors duration-300" />
-              <div className="absolute -bottom-4 -right-4 w-24 h-24 rounded-full bg-teal-700/10 group-hover:bg-teal-700/20 transition-colors duration-300" />
-              <div className="absolute bottom-5 left-7">
-                <span className="text-[11px] font-bold text-white/40 uppercase tracking-widest">20 pertanyaan &middot; ~5 menit</span>
               </div>
             </button>
           </div>
