@@ -34,8 +34,8 @@ components:
       type: object
       required: [nim, password]
       properties:
-        nim: { type: string, example: "215150300111053" }
-        password: { type: string, example: "sigap123" }
+        nim: { type: string, example: "255150300111053" }
+        password: { type: string, example: "SIGAP-UB123" }
 
     LoginResponse:
       type: object

@@ -100,31 +100,43 @@ CREATE INDEX idx_bookings_user_id    ON counseling_bookings (user_id);
 CREATE INDEX idx_bookings_created_at ON counseling_bookings (created_at);
 
 -- =========================================================================
--- SEED DATA — minimal demo (2 mahasiswa, 1 konselor, 1 asesmen contoh)
+-- SEED DATA — minimal demo (3 mahasiswa, 1 konselor, 1 asesmen contoh)
 -- Semua nilai bersifat dummy / synthetic — bukan data mahasiswa nyata.
 -- =========================================================================
 
--- Mahasiswa dummy 1
+-- Mahasiswa 1
 INSERT INTO users (id, nim, nama, email, fakultas, angkatan, role)
 VALUES (
     '11111111-1111-1111-1111-111111111111',
-    '215150300111053',
+    '255150300111053',
     'Arva Mada Jayastu',
     'arva@student.ub.ac.id',
     'FILKOM',
-    2021,
+    2025,
     'mahasiswa'
 );
 
--- Mahasiswa dummy 2
+-- Mahasiswa 2
 INSERT INTO users (id, nim, nama, email, fakultas, angkatan, role)
 VALUES (
     '22222222-2222-2222-2222-222222222222',
-    '215150301111027',
+    '255150301111027',
     'Farrel Arzaqia Mecca',
     'farrel@student.ub.ac.id',
     'FILKOM',
-    2021,
+    2025,
+    'mahasiswa'
+);
+
+-- Mahasiswa 3
+INSERT INTO users (id, nim, nama, email, fakultas, angkatan, role)
+VALUES (
+    '55555555-5555-5555-5555-555555555555',
+    '25515030111106',
+    'Fristian Boas Nathaniel',
+    'fristian@student.ub.ac.id',
+    'FILKOM',
+    2025,
     'mahasiswa'
 );
 

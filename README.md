@@ -1,17 +1,26 @@
 <div align="center">
 
 # SIGAP UB
-### Sistem Informasi Asesmen dan Pemantauan Psikologis
-**TEKRA 2026 — Software Development Challenge · Universitas Brawijaya**
 
-![Tema](https://img.shields.io/badge/Tema-Smart%20Campus-0D9488?style=flat-square)
-![Stack](https://img.shields.io/badge/Stack-React%2019%20%2B%20Express%20%2B%20Postgres-1E293B?style=flat-square)
-![Container](https://img.shields.io/badge/Container-Docker%20Compose-2496ED?style=flat-square)
+**Sistem Informasi Asesmen dan Pemantauan Psikologis**
+
+*Mengoptimalkan kapasitas 5 konselor untuk menjangkau 75.000 mahasiswa*
+
+[![TEKRA 2026](https://img.shields.io/badge/TEKRA_2026-Software_Development_Challenge-0F766E?style=for-the-badge)](https://github.com/arvamadax/sigap-ub)
+[![Universitas Brawijaya](https://img.shields.io/badge/Universitas-Brawijaya-1E293B?style=for-the-badge)](https://ub.ac.id)
+
+![React 19](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-6.2-646CFF?style=flat-square&logo=vite&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)
+![Express](https://img.shields.io/badge/Express-4.x-000000?style=flat-square&logo=express&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-4169E1?style=flat-square&logo=postgresql&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=flat-square&logo=docker&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-22C55E?style=flat-square)
 
 </div>
 
----
+<br/>
 
 ## 1. Tentang Solusi
 
@@ -37,6 +46,18 @@ melainkan **mengoptimalkan kapasitas 5 konselor agar mampu menjangkau
 > **Catatan transparansi:** SIGAP UB tidak menggunakan AI generatif maupun
 > model machine learning. Semua keputusan triase mengikuti aturan skor
 > klinis yang diterbitkan oleh komunitas riset internasional dan WHO.
+
+### Fitur Utama
+
+| Fitur | Deskripsi |
+|-------|-----------|
+| **Triase Mandiri** | Skrining 5 menit dengan PHQ-9, GAD-7, dan SRQ-20 |
+| **Klasifikasi Deterministik** | Threshold cut-off klinis tervalidasi WHO, bukan ML |
+| **Dashboard Mahasiswa** | Riwayat asesmen, rekomendasi, dan profil risiko personal |
+| **Dashboard Konselor** | Triase real-time, distribusi risiko, dan notifikasi prioritas |
+| **Dual-Mode Login** | Autentikasi terpisah untuk mahasiswa (SSO SIAM) dan konselor |
+| **Pemesanan Konseling** | Slot prioritas untuk kategori Tinggi/Kritis |
+| **WCAG AA Accessible** | Keyboard navigable, contrast ratio 4.6:1, focus indicators |
 
 ---
 
@@ -324,6 +345,13 @@ sigap-ub/
 ---
 
 <div align="center">
-<sub>Dikembangkan untuk TEKRA 2026 — Software Development Challenge.<br/>
-Tema: Smart Campus · Fokus: Kesehatan Mental Mahasiswa</sub>
+
+---
+
+**SIGAP UB** — Dikembangkan untuk TEKRA 2026 Software Development Challenge
+
+Tema: *Smart Campus* · Fokus: *Kesehatan Mental Mahasiswa*
+
+Fakultas Ilmu Komputer, Universitas Brawijaya
+
 </div>
