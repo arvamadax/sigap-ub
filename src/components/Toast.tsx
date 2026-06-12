@@ -22,9 +22,9 @@ export const Toast: React.FC<ToastProps> = ({
   }, [onClose, duration]);
 
   const bgColor =
-    type === 'success' ? 'bg-[#0D9488]'
+    type === 'success' ? 'bg-teal-700'
     : type === 'error' ? 'bg-rose-600'
-    : 'bg-slate-600';
+    : 'bg-stone-700';
 
   return (
     <div

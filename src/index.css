@@ -3,9 +3,35 @@
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Montserrat", sans-serif;
+
+  /* Design Tokens — Color */
+  --color-brand: #0F766E;
+  --color-brand-hover: #115E59;
+  --color-brand-light: #CCFBF1;
+  --color-brand-surface: #F0FDFA;
+  --color-surface: #FAFAF9;
+  --color-surface-elevated: #FFFFFF;
+  --color-border: #E7E5E4;
+  --color-border-subtle: #F5F5F4;
+  --color-text-primary: #1C1917;
+  --color-text-secondary: #57534E;
+  --color-text-muted: #A8A29E;
+
+  /* Design Tokens — Spacing */
+  --radius-card: 1.25rem;
+  --radius-button: 0.75rem;
+  --radius-input: 0.625rem;
+  --radius-badge: 9999px;
 }
 
-/* ----- Logo marquee scroll ----- */
+/* Focus ring for accessibility */
+*:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Logo marquee scroll */
 @keyframes marquee {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
@@ -16,7 +42,7 @@
   width: max-content;
 }
 
-/* ----- Assessment radio selection pulse ----- */
+/* Assessment radio selection pulse */
 @keyframes scaleUp {
   0% { transform: scale(0.96); opacity: 0.8; }
   100% { transform: scale(1); opacity: 1; }
@@ -24,3 +50,35 @@
 .animate-scale-up {
   animation: scaleUp 0.18s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
+
+/* Shimmer loading skeleton */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, #f5f5f4 25%, #e7e5e4 50%, #f5f5f4 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-card);
+}
+
+/* Progress ring animation */
+@keyframes progressFill {
+  from { stroke-dashoffset: 251.2; }
+}
+.progress-ring-circle {
+  transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Subtle fade-in for cards */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fadeInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+.animate-fade-in-up-delay-1 { animation-delay: 0.08s; opacity: 0; }
+.animate-fade-in-up-delay-2 { animation-delay: 0.16s; opacity: 0; }
+.animate-fade-in-up-delay-3 { animation-delay: 0.24s; opacity: 0; }

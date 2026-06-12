@@ -473,16 +473,16 @@ export const AssessmentView: React.FC<AssessmentViewProps> = ({
   // 1. QUESTION FLOW STATE
   if (!showResult) {
     return (
-      <div className="min-h-screen bg-[#FDFBF7] text-[#1E293B] font-sans flex flex-col antialiased">
+      <div className="min-h-screen bg-stone-50 text-stone-900 font-sans flex flex-col antialiased">
         {/* Wizard Header bar */}
         <header className="w-full px-6 md:px-12 py-4 max-w-[1280px] mx-auto flex justify-between items-center z-50">
-          <div className="font-bold text-xl text-[#0D9488] flex items-center gap-2 cursor-pointer transition-all hover:scale-105 active:scale-95 duration-150" onClick={() => onSetView('dashboard')}>
-            SIGAP <span className="text-[#1E293B]">UB</span>
+          <div className="font-bold text-xl text-teal-700 flex items-center gap-2 cursor-pointer transition-all hover:scale-105 active:scale-95 duration-150" onClick={() => onSetView('dashboard')}>
+            SIGAP <span className="text-stone-900">UB</span>
           </div>
           <div>
-            <button 
+            <button
               onClick={handleSaveAndExit}
-              className="text-slate-500 hover:text-[#0D9488] transition-colors flex items-center gap-1.5 font-bold text-xs md:text-sm cursor-pointer hover:scale-105 active:scale-95 duration-150"
+              className="text-stone-500 hover:text-teal-700 transition-colors flex items-center gap-1.5 font-bold text-xs md:text-sm cursor-pointer hover:scale-105 active:scale-95 duration-150"
             >
               <CloseIcon size={16} />
               <span className="hidden md:inline">Simpan &amp; Keluar</span>
@@ -497,26 +497,26 @@ export const AssessmentView: React.FC<AssessmentViewProps> = ({
             {/* Top Progress bar and titles matching mockup */}
             <div className="w-full flex flex-col gap-2.5">
               <div className="flex justify-between items-center w-full">
-                <span className="font-bold text-xs text-slate-400 uppercase tracking-wider">
+                <span className="font-bold text-xs text-stone-400 uppercase tracking-wider">
                   {moduleTitleMap[assessmentType]}
                 </span>
-                <span className="font-bold text-xs text-[#0D9488]">
+                <span className="font-bold text-xs text-teal-700">
                   Pertanyaan {currentIndex + 1} dari {questions.length}
                 </span>
               </div>
-              <div aria-valuemax={100} aria-valuemin={0} aria-valuenow={progressPercent} className="h-2 w-full bg-slate-100 rounded-full overflow-hidden" role="progressbar">
-                <div 
-                  className="h-full bg-[#0D9488] rounded-full transition-all duration-300 ease-out" 
+              <div aria-valuemax={100} aria-valuemin={0} aria-valuenow={progressPercent} className="h-2 w-full bg-stone-100 rounded-full overflow-hidden" role="progressbar">
+                <div
+                  className="h-full bg-teal-700 rounded-full transition-all duration-300 ease-out"
                   style={{ width: `${progressPercent}%` }}
                 ></div>
               </div>
             </div>
 
             {/* Simulated Question Card Frame */}
-            <div className={`bg-white border border-[#F0EBE2] rounded-2xl shadow-sm p-6 md:p-12 w-full transition-all duration-200 ${
+            <div className={`bg-white border border-stone-200 rounded-2xl shadow-sm p-6 md:p-12 w-full transition-all duration-200 ${
               questionFade === 'in' ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-2 scale-[0.99]'
             }`}>
-              <h1 className="font-display font-bold text-xl md:text-2xl text-[#1E293B] mb-8 leading-snug">
+              <h1 className="font-display font-bold text-xl md:text-2xl text-stone-900 mb-8 leading-snug">
                 {currentQuestion.text}
               </h1>
 
@@ -529,10 +529,10 @@ export const AssessmentView: React.FC<AssessmentViewProps> = ({
                     <label
                       key={option.score}
                       htmlFor={optionId}
-                      className={`relative flex items-center p-4.5 border rounded-xl cursor-pointer transition-all duration-200 group hover:scale-[1.01] active:scale-[0.99] has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-[#0D9488]/40 has-[:focus-visible]:ring-offset-2 ${
+                      className={`relative flex items-center p-4.5 border rounded-xl cursor-pointer transition-all duration-200 group hover:scale-[1.01] active:scale-[0.99] has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-teal-700/40 has-[:focus-visible]:ring-offset-2 ${
                         isSelected
-                          ? 'border-[#0D9488] bg-teal-50/50 ring-1 ring-[#0D9488]/40 shadow-sm'
-                          : 'border-slate-200 hover:border-[#0D9488] hover:bg-[#FDFBF7]'
+                          ? 'border-teal-700 bg-teal-50/50 ring-1 ring-teal-700/40 shadow-sm'
+                          : 'border-stone-200 hover:border-teal-700 hover:bg-stone-50'
                       }`}
                     >
                       <input
@@ -547,14 +547,14 @@ export const AssessmentView: React.FC<AssessmentViewProps> = ({
                       {/* Stylized custom animated radio indicator */}
                       <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center mr-4 transition-all duration-200 ${
                         isSelected
-                          ? 'border-[#0D9488]'
-                          : 'border-slate-300 group-hover:border-[#0D9488]'
+                          ? 'border-teal-700'
+                          : 'border-stone-300 group-hover:border-teal-700'
                       }`}>
                         {isSelected && (
-                          <div className="w-2.5 h-2.5 rounded-full bg-[#0D9488] animate-scale-up"></div>
+                          <div className="w-2.5 h-2.5 rounded-full bg-teal-700 animate-scale-up"></div>
                         )}
                       </div>
-                      <span className={`text-sm md:text-base text-[#1E293B] ${isSelected ? 'font-semibold' : ''}`}>
+                      <span className={`text-sm md:text-base text-stone-900 ${isSelected ? 'font-semibold' : ''}`}>
                         {option.text}
                       </span>
                     </label>
@@ -569,9 +569,9 @@ export const AssessmentView: React.FC<AssessmentViewProps> = ({
                 onClick={handleBack}
                 disabled={currentIndex === 0}
                 className={`transition-all font-bold text-xs md:text-sm flex items-center gap-2 group cursor-pointer active:scale-95 ${
-                  currentIndex === 0 
-                    ? 'text-slate-300 pointer-events-none' 
-                    : 'text-slate-500 hover:text-[#0D9488]'
+                  currentIndex === 0
+                    ? 'text-stone-300 pointer-events-none'
+                    : 'text-stone-500 hover:text-teal-700'
                 }`}
               >
                 <ArrowLeftIcon size={16} className="group-hover:-translate-x-1 transition-transform" />
@@ -580,7 +580,7 @@ export const AssessmentView: React.FC<AssessmentViewProps> = ({
               
               <button 
                 onClick={handleNext}
-                className="bg-[#0D9488] hover:bg-[#0F766E] hover:scale-[1.02] active:scale-95 text-white font-bold text-xs md:text-sm py-3 px-6 rounded-xl transition-all flex items-center gap-2 shadow-sm duration-150 cursor-pointer"
+                className="bg-teal-700 hover:bg-teal-800 hover:scale-[1.02] active:scale-95 text-white font-bold text-xs md:text-sm py-3 px-6 rounded-xl transition-all flex items-center gap-2 shadow-sm duration-150 cursor-pointer"
               >
                 {currentIndex === questions.length - 1 ? 'Selesai & Evaluasi' : 'Selanjutnya'}
                 <ArrowRightIcon size={16} />
@@ -591,14 +591,14 @@ export const AssessmentView: React.FC<AssessmentViewProps> = ({
         </main>
 
         {/* Minimal Footer for Focused Design */}
-        <footer className="w-full py-8 mt-auto border-t border-[#F0EBE2] text-xs text-slate-400">
+        <footer className="w-full py-8 mt-auto border-t border-stone-200 text-xs text-stone-400">
           <div className="max-w-[1280px] mx-auto px-6 md:px-12 flex flex-col md:flex-row justify-between items-center gap-4">
             <div>© 2026 Universitas Brawijaya Psychological Support System</div>
             <div className="flex gap-4">
               <button
                 type="button"
                 onClick={() => setToast({ message: 'Nomor Crisis Hotline (Kemenkes): 119', type: 'info' })}
-                className="hover:text-[#0D9488] transition-colors cursor-pointer"
+                className="hover:text-teal-700 transition-colors cursor-pointer"
               >
                 Crisis Hotlines
               </button>
@@ -635,29 +635,29 @@ export const AssessmentView: React.FC<AssessmentViewProps> = ({
   const maxScore = assessmentType === 'gad7' ? 21 : assessmentType === 'phq9' ? 27 : 20;
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] text-[#1E293B] font-sans flex flex-col items-center justify-center p-6 antialiased">
-      <div className="w-full max-w-2xl bg-white rounded-2xl border border-[#F0EBE2] shadow-md p-8 md:p-12 text-center flex flex-col items-center animate-in fade-in zoom-in-95 duration-200">
-        
+    <div className="min-h-screen bg-stone-50 text-stone-900 font-sans flex flex-col items-center justify-center p-6 antialiased">
+      <div className="w-full max-w-2xl bg-white rounded-2xl border border-stone-200 shadow-md p-8 md:p-12 text-center flex flex-col items-center animate-in fade-in zoom-in-95 duration-200">
+
         {/* Verification Icon */}
-        <div className="w-16 h-16 bg-teal-50 rounded-full flex items-center justify-center text-[#0D9488] mb-6">
+        <div className="w-16 h-16 bg-teal-50 rounded-full flex items-center justify-center text-teal-700 mb-6">
           <VerifiedUserIcon size={36} />
         </div>
 
-        <span className="font-bold text-xs text-[#0D9488] uppercase tracking-widest block mb-1">
+        <span className="font-bold text-xs text-teal-700 uppercase tracking-widest block mb-1">
           Laporan Hasil Asesmen Mandiri
         </span>
-        <h1 className="font-display font-black text-2xl md:text-3xl text-[#1E293B] mb-2 leading-tight">
+        <h1 className="font-display font-black text-2xl md:text-3xl text-stone-900 mb-2 leading-tight">
           Asesmen Berhasil Terselesaikan
         </h1>
-        <p className="text-xs md:text-sm text-slate-500 max-w-md mb-8">
+        <p className="text-xs md:text-sm text-stone-500 max-w-md mb-8">
           Sistem deteksi dini SIGAP UB telah memproses jawaban Anda. Detail diagnosis tercantum di bawah ini.
         </p>
 
         {/* Score & Evaluation Card */}
-        <div className="w-full bg-[#fcfbfa] rounded-2xl p-6 border border-[#F0EBE2] mb-8 flex flex-col items-center text-center">
+        <div className="w-full bg-stone-50 rounded-2xl p-6 border border-stone-200 mb-8 flex flex-col items-center text-center">
           <div className="flex items-baseline gap-1 mt-1 mb-2">
-            <span className="text-4xl font-black text-[#0D9488]">{calculatedScore}</span>
-            <span className="text-slate-400 text-sm font-semibold">/ {maxScore} poin</span>
+            <span className="text-4xl font-black text-teal-700">{calculatedScore}</span>
+            <span className="text-stone-400 text-sm font-semibold">/ {maxScore} poin</span>
           </div>
 
           {/* Classification badge */}
@@ -665,15 +665,15 @@ export const AssessmentView: React.FC<AssessmentViewProps> = ({
             {outcome.text} ({outcome.label})
           </div>
 
-          <p className="text-xs md:text-sm text-slate-500 leading-relaxed max-w-lg">
+          <p className="text-xs md:text-sm text-stone-500 leading-relaxed max-w-lg">
             {outcome.desc}
           </p>
         </div>
 
         {/* Re-entry control */}
-        <button 
+        <button
           onClick={handleFinish}
-          className="w-full bg-[#0D9488] hover:bg-[#0F766E] hover:scale-[1.02] active:scale-95 text-white font-bold py-4 px-6 rounded-xl transition-all duration-150 shadow-md flex items-center justify-center gap-2 cursor-pointer"
+          className="w-full bg-teal-700 hover:bg-teal-800 hover:scale-[1.02] active:scale-95 text-white font-bold py-4 px-6 rounded-xl transition-all duration-150 shadow-md flex items-center justify-center gap-2 cursor-pointer"
         >
           Simpan &amp; Kembali ke Dashboard
           <ArrowRightIcon size={16} />

@@ -10,8 +10,7 @@ export default function App() {
   const [view, setView] = useState<ViewType>('landing');
   const [activeAssessment, setActiveAssessment] = useState<AssessmentType>('gad7');
   const [fadeState, setFadeState] = useState<'in' | 'out'>('in');
-  
-  // State for SIAM UB Authentication
+
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
   const [loginStep, setLoginStep] = useState<'form' | 'loading' | 'success'>('form');
@@ -19,10 +18,8 @@ export default function App() {
   const [username, setUsername] = useState<string>('mahasiswa@student.ub.ac.id');
   const [password, setPassword] = useState<string>('');
 
-  // In-app toast notifications (replaces native alert())
   const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
 
-  // Set initial simulated history matching mockup specifications exactly
   const [history, setHistory] = useState<HistoryItem[]>([
     {
       id: 'srq20-initial',
@@ -42,7 +39,6 @@ export default function App() {
     }
   ]);
 
-  // Counseling Consultation Form States
   const [isCounselorModalOpen, setIsCounselorModalOpen] = useState<boolean>(false);
   const [counselorSubmitted, setCounselorSubmitted] = useState<boolean>(false);
   const [formData, setFormData] = useState({
@@ -54,12 +50,10 @@ export default function App() {
   });
 
   const changeView = (nextView: ViewType) => {
-    // Access control check: If guest tries to access dashboard or assessment, trigger SSO Login Modal
     if (!isLoggedIn && (nextView === 'dashboard' || nextView === 'assessment')) {
       setIsLoginModalOpen(true);
       return;
     }
-
     setFadeState('out');
     setTimeout(() => {
       setView(nextView);
@@ -78,25 +72,19 @@ export default function App() {
       setToast({ message: 'Silakan isi email dan password SIAM Anda.', type: 'error' });
       return;
     }
-
     setLoginStep('loading');
     setLoginMessage('Menghubungkan ke server SIAM UB...');
-
     setTimeout(() => {
-      setLoginMessage('Mengautentikasi akun & sinkronisasi NIM 21500010023...');
+      setLoginMessage('Mengautentikasi akun...');
     }, 800);
-
     setTimeout(() => {
-      setLoginMessage('Login Berhasil! Mengalihkan ke dashboard...');
+      setLoginMessage('Login berhasil!');
       setLoginStep('success');
     }, 1600);
-
     setTimeout(() => {
       setIsLoggedIn(true);
       setIsLoginModalOpen(false);
       setLoginStep('form');
-      
-      // Navigate to dashboard
       setFadeState('out');
       setTimeout(() => {
         setView('dashboard');
@@ -105,25 +93,22 @@ export default function App() {
     }, 2400);
   };
 
-  // Dynamic state handler for finished assessments 
   const handleAddHistoryItem = (
     type: AssessmentType,
     score: number,
     interpretation: string,
     label: 'Selesai' | 'Perhatian' | 'Aman'
   ) => {
-    const formattedDate = new Date().toLocaleDateString('id-ID', { 
-      day: 'numeric', 
-      month: 'short', 
-      year: 'numeric' 
+    const formattedDate = new Date().toLocaleDateString('id-ID', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
     });
-
     const nameMap: Record<AssessmentType, string> = {
       gad7: 'Asesmen Kecemasan (GAD-7)',
       phq9: 'Asesmen Depresi (PHQ-9)',
       srq20: 'Skrining Umum (SRQ-20)'
     };
-
     const newItem: HistoryItem = {
       id: `${type}-${Date.now()}`,
       assessmentName: nameMap[type],
@@ -132,7 +117,6 @@ export default function App() {
       score: score,
       interpretation: interpretation
     };
-
     setHistory(prev => [newItem, ...prev]);
   };
 
@@ -154,22 +138,21 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] selection:bg-[#006565]/10 selection:text-[#006565]">
-      {/* Dynamic View Dispatcher with smooth CSS Transition wrapper */}
+    <div className="min-h-screen bg-stone-50 selection:bg-teal-700/10 selection:text-teal-900">
       <div className={`transition-all duration-300 ease-in-out transform ${
         fadeState === 'in' ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'
       }`}>
         {view === 'landing' && (
-          <LandingView 
-            onSetView={changeView} 
+          <LandingView
+            onSetView={changeView}
             isLoggedIn={isLoggedIn}
             onLogout={handleLogout}
             onTriggerLogin={() => setIsLoginModalOpen(true)}
           />
         )}
         {view === 'dashboard' && (
-          <DashboardView 
-            onSetView={changeView} 
+          <DashboardView
+            onSetView={changeView}
             history={history}
             onOpenCounselorModal={() => setIsCounselorModalOpen(true)}
             onSelectAssessment={(type) => {
@@ -180,118 +163,122 @@ export default function App() {
           />
         )}
         {view === 'assessment' && (
-          <AssessmentView 
-            onSetView={changeView} 
+          <AssessmentView
+            onSetView={changeView}
             assessmentType={activeAssessment}
             onAddHistoryItem={handleAddHistoryItem}
           />
         )}
       </div>
 
-      {/* SSO SIAM UB Login Modal Overlay */}
+      {/* Login Modal — Vercel-style SSO */}
       {isLoginModalOpen && (
-        <div className="fixed inset-0 bg-[#081b3a]/75 backdrop-blur-sm z-[110] flex items-center justify-center p-4 overflow-y-auto">
-          <div className="relative bg-white rounded-2xl w-full max-w-md border border-[#bdc9c8]/40 shadow-2xl overflow-hidden transition-all duration-300 scale-100 animate-in fade-in zoom-in-95 duration-150 text-left">
-            
-            {/* Modal Header */}
-            <div className="flex bg-[#081b3a] text-white justify-between items-center px-6 py-4.5">
-              <div className="flex items-center gap-2">
-                <span className="text-xl">🛡️</span>
-                <h3 className="font-bold text-base md:text-lg tracking-tight">
-                  Single Sign-On SIAM UB
-                </h3>
-              </div>
-              {loginStep === 'form' && (
-                <button 
-                  onClick={() => setIsLoginModalOpen(false)}
-                  className="text-gray-300 hover:text-white p-1 hover:bg-white/10 rounded-lg transition-colors cursor-pointer active:scale-90"
-                >
-                  <CloseIcon size={20} />
-                </button>
-              )}
-            </div>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[110] flex items-center justify-center p-4">
+          <div className="relative bg-white rounded-2xl w-full max-w-[420px] shadow-2xl overflow-hidden">
 
-            {/* Modal Body */}
             {loginStep === 'form' && (
-              <form onSubmit={handleSiamLoginSubmit} className="p-6 flex flex-col gap-4.5">
-                <div className="bg-[#f0f9ff] border border-blue-100 p-4 rounded-xl flex gap-3 text-xs md:text-sm text-blue-800">
-                  <span>💡</span>
-                  <p>
-                    Silakan masuk menggunakan akun <strong>SIAM UB</strong> (Sistem Informasi Akademik Mahasiswa) Anda untuk mengakses dasbor asesmen psikologis.
-                  </p>
+              <>
+                <button
+                  onClick={() => setIsLoginModalOpen(false)}
+                  className="absolute top-4 right-4 text-stone-400 hover:text-stone-600 p-1.5 hover:bg-stone-100 rounded-lg transition-colors z-10"
+                >
+                  <CloseIcon size={18} />
+                </button>
+
+                <div className="pt-8 pb-2 px-8 text-center">
+                  <div className="w-14 h-14 bg-teal-700 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-teal-700/20">
+                    <svg viewBox="0 0 24 24" className="w-7 h-7 text-white" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                    </svg>
+                  </div>
+                  <h2 className="font-display font-bold text-xl text-stone-900 mb-1">Masuk ke SIGAP UB</h2>
+                  <p className="text-sm text-stone-500">Gunakan akun SIAM untuk mengakses asesmen</p>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-bold text-[#6e7979] uppercase tracking-wider mb-1">
-                    Email UB / Username SIAM
-                  </label>
-                  <input 
-                    type="text"
-                    required
-                    placeholder="mahasiswa@student.ub.ac.id"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    className="w-full bg-white text-[#1b1c1a] text-xs md:text-sm px-3.5 py-2.5 rounded-lg border border-slate-300 hover:border-[#006565] focus:border-[#006565] focus:outline-none focus:ring-2 focus:ring-[#006565]/10 font-semibold"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-[#6e7979] uppercase tracking-wider mb-1">
-                    Kata Sandi (Password)
-                  </label>
-                  <input 
-                    type="password"
-                    required
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full bg-white text-[#1b1c1a] text-xs md:text-sm px-3.5 py-2.5 rounded-lg border border-slate-300 hover:border-[#006565] focus:border-[#006565] focus:outline-none focus:ring-2 focus:ring-[#006565]/10 font-mono"
-                  />
-                </div>
-
-                <div className="flex items-center justify-between mt-1 text-[11px] text-slate-500 font-semibold">
-                  <label className="flex items-center gap-1.5 cursor-pointer select-none">
-                    <input type="checkbox" defaultChecked className="rounded border-slate-300 text-[#006565] focus:ring-[#006565]/20 cursor-pointer" />
-                    Ingat Saya
-                  </label>
-                  <a href="https://siam.ub.ac.id" target="_blank" rel="noreferrer" className="text-[#0D9488] hover:underline">Lupa Sandi?</a>
-                </div>
-
-                <div className="flex gap-3 justify-end mt-2 pt-4 border-t border-slate-100">
-                  <button 
-                    type="button" 
-                    onClick={() => setIsLoginModalOpen(false)}
-                    className="text-gray-500 hover:bg-gray-100 hover:text-gray-800 font-bold text-xs md:text-sm px-4.5 py-2.5 rounded-xl transition-all duration-150 cursor-pointer active:scale-95"
+                <div className="px-8 pt-5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!password) {
+                        setToast({ message: 'Isi password terlebih dahulu di form bawah.', type: 'error' });
+                        return;
+                      }
+                      handleSiamLoginSubmit({ preventDefault: () => {} } as React.FormEvent);
+                    }}
+                    className="w-full flex items-center justify-center gap-3 bg-stone-900 text-white font-semibold text-sm py-3 px-4 rounded-xl hover:bg-stone-800 active:scale-[0.98] transition-all"
                   >
-                    Batal
-                  </button>
-                  <button 
-                    type="submit" 
-                    className="bg-[#0D9488] hover:bg-[#0F766E] hover:scale-[1.02] text-white font-bold text-xs md:text-sm px-6 py-2.5 rounded-xl transition-all duration-150 shadow-sm active:scale-95"
-                  >
-                    Login via SIAM
+                    <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                    Login via SSO SIAM UB
                   </button>
                 </div>
-              </form>
+
+                <div className="flex items-center gap-3 px-8 py-4">
+                  <div className="flex-1 h-px bg-stone-200"></div>
+                  <span className="text-xs text-stone-400 font-medium">atau masuk manual</span>
+                  <div className="flex-1 h-px bg-stone-200"></div>
+                </div>
+
+                <form onSubmit={handleSiamLoginSubmit} className="px-8 pb-8 flex flex-col gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-stone-700 mb-1.5">Email UB</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="mahasiswa@student.ub.ac.id"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-stone-300 hover:border-stone-400 focus:border-teal-700 focus:ring-2 focus:ring-teal-700/10 focus:outline-none transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-stone-700 mb-1.5">Password</label>
+                    <input
+                      type="password"
+                      required
+                      placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-stone-300 hover:border-stone-400 focus:border-teal-700 focus:ring-2 focus:ring-teal-700/10 focus:outline-none font-mono transition-colors"
+                    />
+                  </div>
+                  <div className="flex items-center justify-between text-xs">
+                    <label className="flex items-center gap-1.5 cursor-pointer text-stone-500">
+                      <input type="checkbox" defaultChecked className="rounded border-stone-300 text-teal-700 focus:ring-teal-700/20" />
+                      Ingat saya
+                    </label>
+                    <a href="https://siam.ub.ac.id" target="_blank" rel="noreferrer" className="text-teal-700 hover:underline font-medium">
+                      Lupa sandi?
+                    </a>
+                  </div>
+                  <button
+                    type="submit"
+                    className="w-full bg-teal-700 hover:bg-teal-800 text-white font-semibold text-sm py-2.5 px-4 rounded-xl active:scale-[0.98] transition-all mt-1"
+                  >
+                    Masuk
+                  </button>
+                </form>
+              </>
             )}
 
-            {/* Authenticating Simulation Loading */}
             {loginStep === 'loading' && (
-              <div className="p-10 text-center flex flex-col items-center gap-4 animate-in fade-in duration-200">
-                <div className="w-12 h-12 rounded-full border-4 border-[#0D9488]/20 border-t-[#0D9488] animate-spin"></div>
-                <h4 className="font-bold text-base text-[#081b3a]">Autentikasi SSO</h4>
-                <p className="text-xs text-slate-500 font-semibold max-w-xs">{loginMessage}</p>
+              <div className="py-16 px-8 text-center flex flex-col items-center gap-4">
+                <div className="w-12 h-12 rounded-full border-[3px] border-stone-200 border-t-teal-700 animate-spin"></div>
+                <div>
+                  <h3 className="font-semibold text-base text-stone-900 mb-1">Mengautentikasi</h3>
+                  <p className="text-sm text-stone-500">{loginMessage}</p>
+                </div>
               </div>
             )}
 
-            {/* Success Simulator Screen */}
             {loginStep === 'success' && (
-              <div className="p-10 text-center flex flex-col items-center gap-3 animate-in fade-in zoom-in-95 duration-200">
-                <div className="w-14 h-14 bg-emerald-100 text-emerald-800 rounded-full flex items-center justify-center">
-                  <VerifiedUserIcon size={30} />
+              <div className="py-16 px-8 text-center flex flex-col items-center gap-3">
+                <div className="w-14 h-14 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center">
+                  <VerifiedUserIcon size={28} />
                 </div>
-                <h4 className="font-bold text-base text-emerald-800">Login Berhasil!</h4>
-                <p className="text-xs text-slate-500 font-semibold">{loginMessage}</p>
+                <h3 className="font-semibold text-base text-stone-900">Login Berhasil</h3>
+                <p className="text-sm text-stone-500">Mengalihkan ke dashboard...</p>
               </div>
             )}
 
@@ -299,72 +286,56 @@ export default function App() {
         </div>
       )}
 
-      {/* Counseling Reservation Dialog Modal Overlay */}
+      {/* Counseling Modal */}
       {isCounselorModalOpen && (
-        <div className="fixed inset-0 bg-[#081b3a]/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 overflow-y-auto">
-          <div className="relative bg-white rounded-2xl w-full max-w-lg border border-[#bdc9c8]/40 shadow-2xl overflow-hidden transition-all duration-300 scale-100 animate-in fade-in zoom-in-95 duration-150">
-            
-            {/* Modal Header */}
-            <div className="flex bg-[#081b3a] text-white justify-between items-center px-6 py-4">
-              <h3 className="font-bold text-base md:text-lg tracking-tight">
-                Permohonan Janji Temu Konseling
-              </h3>
-              <button 
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden">
+
+            <div className="flex justify-between items-center px-6 py-4 border-b border-stone-200">
+              <h3 className="font-bold text-base text-stone-900">Janji Temu Konseling</h3>
+              <button
                 onClick={resetForm}
-                className="text-gray-300 hover:text-white p-1 hover:bg-white/10 rounded-lg transition-colors cursor-pointer active:scale-90"
+                className="text-stone-400 hover:text-stone-600 p-1.5 hover:bg-stone-100 rounded-lg transition-colors"
               >
-                <CloseIcon size={20} />
+                <CloseIcon size={18} />
               </button>
             </div>
 
-            {/* Modal Contents */}
             {!counselorSubmitted ? (
-              <form onSubmit={handleFormSubmit} className="p-6 md:p-8 flex flex-col gap-5 text-left">
-                
-                {/* Introduction info */}
-                <div className="bg-[#f5f3ef] border border-gray-100 p-4 rounded-xl flex gap-3 text-xs md:text-sm text-[#3e4949]">
-                  <span>💡</span>
-                  <p>
-                    Layanan konseling SIGAP UB bersifat <strong>rahasia &amp; gratis</strong> bagi mahasiswa aktif Universitas Brawijaya yang terhubung SIAM.
-                  </p>
+              <form onSubmit={handleFormSubmit} className="p-6 flex flex-col gap-5">
+                <div className="bg-teal-50 border border-teal-100 p-3.5 rounded-xl flex gap-3 text-sm text-teal-800">
+                  <svg viewBox="0 0 24 24" className="w-5 h-5 shrink-0 mt-0.5" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                  <p>Layanan konseling SIGAP UB bersifat <strong>rahasia &amp; gratis</strong> untuk mahasiswa UB aktif.</p>
                 </div>
 
-                {/* Patient static details */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-bold text-[#6e7979] uppercase tracking-wider mb-1">
-                      Nama Mahasiswa
-                    </label>
-                    <input 
-                      type="text" 
-                      value="Mahasiswa UB Brawijaya" 
-                      disabled 
-                      className="w-full bg-[#efeeea]/60 text-[#1b1c1a]/70 text-xs md:text-sm px-3.5 py-2.5 rounded-lg border border-slate-200 cursor-not-allowed font-medium"
+                    <label className="block text-sm font-medium text-stone-700 mb-1.5">Nama</label>
+                    <input
+                      type="text"
+                      value="Mahasiswa UB Brawijaya"
+                      disabled
+                      className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-stone-200 bg-stone-50 text-stone-500 cursor-not-allowed"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-[#6e7979] uppercase tracking-wider mb-1">
-                      NIM (Nomor Induk)
-                    </label>
-                    <input 
-                      type="text" 
+                    <label className="block text-sm font-medium text-stone-700 mb-1.5">NIM</label>
+                    <input
+                      type="text"
                       value={formData.nim}
                       onChange={(e) => setFormData(prev => ({ ...prev, nim: e.target.value }))}
                       required
-                      className="w-full bg-white text-[#1b1c1a] text-xs md:text-sm px-3.5 py-2.5 rounded-lg border border-slate-300 hover:border-[#006565] focus:border-[#006565] focus:outline-none focus:ring-2 focus:ring-[#006565]/10 font-medium"
+                      className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-stone-300 hover:border-stone-400 focus:border-teal-700 focus:ring-2 focus:ring-teal-700/10 focus:outline-none transition-colors"
                     />
                   </div>
                 </div>
 
-                {/* Problem category dropdown */}
                 <div>
-                  <label className="block text-xs font-bold text-[#6e7979] uppercase tracking-wider mb-1">
-                    Kategori Hambatan Psikologis
-                  </label>
-                  <select 
+                  <label className="block text-sm font-medium text-stone-700 mb-1.5">Kategori Hambatan</label>
+                  <select
                     value={formData.kategori}
                     onChange={(e) => setFormData(prev => ({ ...prev, kategori: e.target.value }))}
-                    className="w-full bg-white text-[#1b1c1a] text-xs md:text-sm px-3.5 py-2.5 rounded-lg border border-slate-300 focus:border-[#006565] focus:outline-none focus:ring-2 focus:ring-[#006565]/10 font-semibold cursor-pointer"
+                    className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-stone-300 hover:border-stone-400 focus:border-teal-700 focus:ring-2 focus:ring-teal-700/10 focus:outline-none cursor-pointer transition-colors"
                   >
                     <option value="Kecemasan Akademik">Kecemasan Akademik (Stres / Ujian / Tugas)</option>
                     <option value="Stres Skripsi / Tugas Akhir">Stres Skripsi / Tugas Akhir</option>
@@ -375,89 +346,73 @@ export default function App() {
                   </select>
                 </div>
 
-                {/* Scheduling selection slot */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-bold text-[#6e7979] uppercase tracking-wider mb-1">
-                      Tanggal Konseling
-                    </label>
-                    <input 
-                      type="date" 
+                    <label className="block text-sm font-medium text-stone-700 mb-1.5">Tanggal</label>
+                    <input
+                      type="date"
                       value={formData.tanggal}
                       min="2026-05-22"
                       onChange={(e) => setFormData(prev => ({ ...prev, tanggal: e.target.value }))}
                       required
-                      className="w-full bg-white text-[#1b1c1a] text-xs md:text-sm px-3.5 py-2.5 rounded-lg border border-slate-300 focus:border-[#006565] focus:outline-none focus:ring-2 focus:ring-[#006565]/10 font-medium"
+                      className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-stone-300 hover:border-stone-400 focus:border-teal-700 focus:ring-2 focus:ring-teal-700/10 focus:outline-none transition-colors"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-[#6e7979] uppercase tracking-wider mb-1">
-                      Pilihan Sesi / Jam
-                    </label>
-                    <select 
+                    <label className="block text-sm font-medium text-stone-700 mb-1.5">Sesi</label>
+                    <select
                       value={formData.sesi}
                       onChange={(e) => setFormData(prev => ({ ...prev, sesi: e.target.value }))}
-                      className="w-full bg-white text-[#1b1c1a] text-xs md:text-sm px-3.5 py-2.5 rounded-lg border border-slate-300 focus:border-[#006565] focus:outline-none focus:ring-2 focus:ring-[#006565]/10 font-semibold cursor-pointer"
+                      className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-stone-300 hover:border-stone-400 focus:border-teal-700 focus:ring-2 focus:ring-teal-700/10 focus:outline-none cursor-pointer transition-colors"
                     >
-                      <option value="09:00 - 10:30 WIB">Sesi Pagi (09:00 - 10:30 WIB)</option>
-                      <option value="11:00 - 12:30 WIB">Sesi Siang (11:00 - 12:30 WIB)</option>
-                      <option value="13:30 - 15:00 WIB">Sesi Sore (13:30 - 15:00 WIB)</option>
+                      <option value="09:00 - 10:30 WIB">Pagi (09:00 - 10:30)</option>
+                      <option value="11:00 - 12:30 WIB">Siang (11:00 - 12:30)</option>
+                      <option value="13:30 - 15:00 WIB">Sore (13:30 - 15:00)</option>
                     </select>
                   </div>
                 </div>
 
-                {/* Personal client text notes */}
                 <div>
-                  <label className="block text-xs font-bold text-[#6e7979] uppercase tracking-wider mb-1">
-                    Catatan keluhan tambahan (Opsional)
-                  </label>
-                  <textarea 
+                  <label className="block text-sm font-medium text-stone-700 mb-1.5">Catatan <span className="text-stone-400 font-normal">(opsional)</span></label>
+                  <textarea
                     rows={3}
-                    placeholder="Tuliskan secara singkat keluhan atau harapan Anda..."
+                    placeholder="Tuliskan keluhan atau harapan Anda..."
                     value={formData.catatan}
                     onChange={(e) => setFormData(prev => ({ ...prev, catatan: e.target.value }))}
-                    className="w-full bg-white text-[#1b1c1a] text-xs md:text-sm px-3.5 py-2.5 rounded-lg border border-slate-300 focus:border-[#006565] focus:outline-none focus:ring-2 focus:ring-[#006565]/10 placeholder-gray-400"
+                    className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-stone-300 hover:border-stone-400 focus:border-teal-700 focus:ring-2 focus:ring-teal-700/10 focus:outline-none placeholder-stone-400 transition-colors"
                   ></textarea>
                 </div>
 
-                {/* Action buttons */}
-                <div className="flex gap-3 justify-end mt-2 pt-4 border-t border-slate-100">
-                  <button 
-                    type="button" 
+                <div className="flex gap-3 justify-end pt-2 border-t border-stone-100">
+                  <button
+                    type="button"
                     onClick={resetForm}
-                    className="text-gray-500 hover:bg-gray-100 hover:text-gray-800 font-bold text-xs md:text-sm px-4.5 py-2.5 rounded-xl transition-all duration-150 cursor-pointer active:scale-95"
+                    className="text-stone-500 hover:text-stone-700 hover:bg-stone-100 font-medium text-sm px-4 py-2.5 rounded-xl transition-colors"
                   >
                     Batal
                   </button>
-                  <button 
-                    type="submit" 
-                    className="bg-[#006565] hover:bg-[#008080] hover:scale-[1.02] text-white font-bold text-xs md:text-sm px-6 py-2.5 rounded-xl transition-all duration-150 shadow-sm active:scale-95"
+                  <button
+                    type="submit"
+                    className="bg-teal-700 hover:bg-teal-800 text-white font-semibold text-sm px-6 py-2.5 rounded-xl active:scale-[0.98] transition-all"
                   >
                     Kirim Permohonan
                   </button>
                 </div>
-
               </form>
             ) : (
-              // Booking Confirmed Visual Screen
-              <div className="p-8 md:p-12 text-center flex flex-col items-center animate-in fade-in zoom-in-95 duration-200">
-                <div className="w-14 h-14 bg-emerald-100 text-emerald-800 rounded-full flex items-center justify-center mb-4">
-                  <VerifiedUserIcon size={30} />
+              <div className="p-10 text-center flex flex-col items-center">
+                <div className="w-14 h-14 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center mb-4">
+                  <VerifiedUserIcon size={28} />
                 </div>
-                
-                <h4 className="font-bold text-lg text-[#081b3a] mb-2">
-                  Permohonan Berhasil Dikirim!
-                </h4>
-                
-                <p className="text-xs md:text-sm text-[#3e4949] leading-relaxed mb-6 max-w-sm">
-                  Permohonan janji temu konseling Anda dengan kategori <strong>{formData.kategori}</strong> pada tanggal <strong>{formData.tanggal} ({formData.sesi})</strong> telah dicatat secara aman. Konselor kami akan memverifikasi permohonan Anda via email atau WhatsApp terdaftar.
+                <h4 className="font-bold text-lg text-stone-900 mb-2">Permohonan Terkirim</h4>
+                <p className="text-sm text-stone-500 leading-relaxed mb-6 max-w-sm">
+                  Janji temu <strong>{formData.kategori}</strong> pada <strong>{formData.tanggal} ({formData.sesi})</strong> telah dicatat. Konselor akan menghubungi via email/WhatsApp.
                 </p>
-
-                <button 
+                <button
                   onClick={resetForm}
-                  className="bg-[#006565] text-white font-bold text-sm px-6 py-2.5 rounded-lg hover:bg-[#008080] hover:scale-[1.02] active:scale-95 transition-all cursor-pointer"
+                  className="bg-teal-700 text-white font-semibold text-sm px-6 py-2.5 rounded-xl hover:bg-teal-800 active:scale-[0.98] transition-all"
                 >
-                  Selesai &amp; Kembali
+                  Selesai
                 </button>
               </div>
             )}
@@ -466,13 +421,8 @@ export default function App() {
         </div>
       )}
 
-      {/* Global Toast Notification */}
       {toast && (
-        <Toast
-          message={toast.message}
-          type={toast.type}
-          onClose={() => setToast(null)}
-        />
+        <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />
       )}
     </div>
   );
