@@ -3,6 +3,7 @@ import { ViewType, HistoryItem, AssessmentType } from './types';
 import { LandingView } from './components/LandingView';
 import { DashboardView } from './components/DashboardView';
 import { AssessmentView } from './components/AssessmentView';
+import { KonselorView } from './components/KonselorView';
 import { CloseIcon, VerifiedUserIcon } from './components/Icons';
 import { Toast, ToastType } from './components/Toast';
 
@@ -50,7 +51,7 @@ export default function App() {
   });
 
   const changeView = (nextView: ViewType) => {
-    if (!isLoggedIn && (nextView === 'dashboard' || nextView === 'assessment')) {
+    if (!isLoggedIn && (nextView === 'dashboard' || nextView === 'assessment' || nextView === 'konselor')) {
       setIsLoginModalOpen(true);
       return;
     }
@@ -167,6 +168,12 @@ export default function App() {
             onSetView={changeView}
             assessmentType={activeAssessment}
             onAddHistoryItem={handleAddHistoryItem}
+          />
+        )}
+        {view === 'konselor' && (
+          <KonselorView
+            onSetView={changeView}
+            onLogout={handleLogout}
           />
         )}
       </div>

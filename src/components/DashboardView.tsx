@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import { ViewType, HistoryItem, AssessmentType } from '../types';
+import { mockMahasiswa } from '../data/mockData';
+import { SummaryBar } from './dashboard/SummaryBar';
+import { RecommendationCard } from './dashboard/RecommendationCard';
+import { AssessmentGrid } from './dashboard/AssessmentGrid';
+import { ProfileCard } from './dashboard/ProfileCard';
+import { HistoryCard } from './dashboard/HistoryCard';
+import { CounselingCard } from './dashboard/CounselingCard';
 import {
   BellIcon,
   HelpIcon,
-  VerifiedUserIcon,
-  FormatListNumberedIcon,
-  HistoryIcon,
-  SupportAgentIcon,
-  MoodBadIcon,
   CloseIcon,
-  ArrowRightIcon,
 } from './Icons';
 import { Toast, ToastType } from './Toast';
 
@@ -21,54 +22,101 @@ interface DashboardViewProps {
   onLogout: () => void;
 }
 
-function ProgressRing({ completed, total }: { completed: number; total: number }) {
-  const radius = 40;
-  const circumference = 2 * Math.PI * radius;
-  const progress = total > 0 ? completed / total : 0;
-  const offset = circumference - progress * circumference;
-
-  return (
-    <div className="relative w-24 h-24 flex items-center justify-center">
-      <svg className="w-24 h-24 -rotate-90" viewBox="0 0 96 96">
-        <circle cx="48" cy="48" r={radius} fill="none" stroke="#E7E5E4" strokeWidth="6" />
-        <circle
-          cx="48" cy="48" r={radius} fill="none"
-          stroke="#0F766E" strokeWidth="6" strokeLinecap="round"
-          strokeDasharray={circumference} strokeDashoffset={offset}
-          className="progress-ring-circle"
-        />
-      </svg>
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-lg font-bold text-stone-900">{completed}/{total}</span>
-        <span className="text-[11px] text-stone-500 font-medium">selesai</span>
-      </div>
-    </div>
-  );
-}
-
 export const DashboardView: React.FC<DashboardViewProps> = ({
   onSetView,
   history,
   onOpenCounselorModal,
   onSelectAssessment,
-  onLogout
+  onLogout,
 }) => {
-  const [isGuideModalOpen, setIsGuideModalOpen] = useState<boolean>(false);
+  const [isGuideModalOpen, setIsGuideModalOpen] = useState(false);
   const [guideTab, setGuideTab] = useState<'alur' | 'privasi' | 'faq'>('alur');
-  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState<boolean>(false);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
 
-  const completedAssessments = history.length;
-  const totalAssessments = 3;
-
   const getAssessmentStatus = (type: string) => {
-    const found = history.find(h => h.assessmentName.toLowerCase().includes(type));
-    return found ? { done: true, score: found.score, date: found.date } : { done: false };
+    const found = history.find((h) => h.assessmentName.toLowerCase().includes(type));
+    return found
+      ? { done: true, score: found.score, date: found.date, interpretation: found.interpretation }
+      : { done: false };
   };
 
   const phq9Status = getAssessmentStatus('depresi');
   const gad7Status = getAssessmentStatus('kecemasan');
   const srq20Status = getAssessmentStatus('srq');
+
+  const completedCount = [phq9Status, gad7Status, srq20Status].filter((s) => s.done).length;
+
+  const recommendations = [
+    {
+      type: 'gad7' as AssessmentType,
+      name: 'Asesmen Kecemasan (GAD-7)',
+      desc: 'Evaluasi tingkat kecemasan umum, stres harian, dan ketegangan psikis dalam 2 minggu terakhir.',
+      questions: 7,
+      minutes: 2,
+      statusKey: 'kecemasan',
+    },
+    {
+      type: 'phq9' as AssessmentType,
+      name: 'Asesmen Depresi (PHQ-9)',
+      desc: 'Skrining mendalam tanda depresi emosional dalam 2 minggu terakhir.',
+      questions: 9,
+      minutes: 3,
+      statusKey: 'depresi',
+    },
+    {
+      type: 'srq20' as AssessmentType,
+      name: 'Skrining Umum WHO (SRQ-20)',
+      desc: '20 pertanyaan skrining mental emosional standar WHO.',
+      questions: 20,
+      minutes: 5,
+      statusKey: 'srq',
+    },
+  ];
+
+  const nextRec = recommendations.find((r) => !getAssessmentStatus(r.statusKey).done) || recommendations[0];
+  const nextRecStatus = getAssessmentStatus(nextRec.statusKey);
+
+  const getKondisiLevel = () => {
+    const scores = history.map((h) => h.score || 0);
+    const maxScore = Math.max(...scores, 0);
+    if (maxScore >= 20) return 'kritis' as const;
+    if (maxScore >= 15) return 'berat' as const;
+    if (maxScore >= 10) return 'sedang' as const;
+    return 'ringan' as const;
+  };
+
+  const assessmentCards = [
+    {
+      type: 'phq9' as AssessmentType,
+      name: 'PHQ-9',
+      category: 'Asesmen Depresi',
+      questionsCount: 9,
+      done: phq9Status.done,
+      score: phq9Status.score,
+      interpretation: phq9Status.interpretation,
+    },
+    {
+      type: 'gad7' as AssessmentType,
+      name: 'GAD-7',
+      category: 'Asesmen Kecemasan',
+      questionsCount: 7,
+      done: gad7Status.done,
+      score: gad7Status.score,
+      interpretation: gad7Status.interpretation,
+    },
+    {
+      type: 'srq20' as AssessmentType,
+      name: 'SRQ-20',
+      category: 'Skrining Umum WHO',
+      questionsCount: 20,
+      done: srq20Status.done,
+      score: srq20Status.score,
+      interpretation: srq20Status.interpretation,
+    },
+  ];
+
+  const latestDate = history.length > 0 ? history[0].date : '—';
 
   return (
     <div className="min-h-screen bg-stone-50 text-stone-900 font-sans flex flex-col">
@@ -81,10 +129,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           >
             <div className="w-8 h-8 bg-teal-700 rounded-lg flex items-center justify-center">
               <svg viewBox="0 0 24 24" className="w-[18px] h-[18px] text-white" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
               </svg>
             </div>
-            <span className="font-bold text-lg tracking-tight">SIGAP <span className="text-teal-700">UB</span></span>
+            <span className="font-bold text-lg tracking-tight">
+              SIGAP <span className="text-teal-700">UB</span>
+            </span>
           </div>
 
           <div className="hidden md:flex items-center gap-1">
@@ -99,6 +149,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               className="text-teal-700 font-semibold text-sm px-3 py-2 rounded-lg bg-teal-50"
             >
               Dashboard
+            </button>
+            <button
+              onClick={() => onSetView('konselor')}
+              className="text-stone-500 hover:text-stone-900 font-medium text-sm px-3 py-2 rounded-lg hover:bg-stone-100 transition-colors"
+            >
+              Konselor
             </button>
             <button
               onClick={() => setIsGuideModalOpen(true)}
@@ -132,24 +188,30 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
                 className="w-9 h-9 rounded-full bg-teal-700 flex items-center justify-center hover:ring-2 hover:ring-teal-200 transition-all"
               >
-                <span className="text-white font-bold text-sm">MU</span>
+                <span className="text-white font-bold text-sm">AM</span>
               </button>
               {isProfileDropdownOpen && (
                 <div role="menu" className="absolute right-0 top-12 w-52 bg-white border border-stone-200 shadow-lg rounded-xl py-1.5 z-50">
                   <div className="px-4 py-2.5 border-b border-stone-100">
-                    <p className="text-sm font-semibold text-stone-900">Mahasiswa UB</p>
-                    <p className="text-xs text-stone-500">21500010023 · FILKOM</p>
+                    <p className="text-sm font-semibold text-stone-900">{mockMahasiswa.nama}</p>
+                    <p className="text-xs text-stone-500">{mockMahasiswa.nim} &middot; {mockMahasiswa.fakultas}</p>
                   </div>
                   <button
                     role="menuitem"
-                    onClick={() => { setIsProfileDropdownOpen(false); setIsGuideModalOpen(true); }}
+                    onClick={() => {
+                      setIsProfileDropdownOpen(false);
+                      setIsGuideModalOpen(true);
+                    }}
                     className="w-full text-left px-4 py-2.5 text-sm text-stone-600 hover:bg-stone-50 transition-colors"
                   >
-                    Panduan &amp; FAQ
+                    Panduan & FAQ
                   </button>
                   <button
                     role="menuitem"
-                    onClick={() => { setIsProfileDropdownOpen(false); onLogout(); }}
+                    onClick={() => {
+                      setIsProfileDropdownOpen(false);
+                      onLogout();
+                    }}
                     className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 font-medium transition-colors"
                   >
                     Keluar
@@ -161,241 +223,60 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </nav>
       </header>
 
+      {/* Summary Bar */}
+      <SummaryBar
+        kondisi={getKondisiLevel()}
+        asesmenSelesai={completedCount}
+        asesmenTotal={3}
+        jadwalBerikutnya={mockMahasiswa.jadwalBerikutnya}
+        sesiKonseling={mockMahasiswa.sesiKonseling}
+        onScheduleCounseling={onOpenCounselorModal}
+      />
+
       {/* Main Content */}
-      <main className="flex-grow w-full max-w-[1200px] mx-auto px-6 md:px-10 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-
+      <main className="flex-grow w-full max-w-[1200px] mx-auto px-6 md:px-10 py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
           {/* Left Column */}
-          <div className="lg:col-span-8 flex flex-col gap-6">
-
-            {/* Welcome + Progress Card */}
-            <section className="bg-white rounded-2xl p-6 md:p-8 border border-stone-200 animate-fade-in-up">
-              <div className="flex flex-col sm:flex-row sm:items-center gap-6">
-                <ProgressRing completed={completedAssessments} total={totalAssessments} />
-                <div className="flex-1">
-                  <h1 className="font-display font-bold text-2xl md:text-[1.75rem] text-stone-900 mb-1.5 leading-tight">
-                    Selamat datang kembali, <span className="text-teal-700">Mahasiswa UB</span>
-                  </h1>
-                  <p className="text-sm text-stone-500 leading-relaxed max-w-lg">
-                    {completedAssessments === 0
-                      ? 'Mulai asesmen pertamamu untuk mengetahui kondisi kesehatan mentalmu saat ini.'
-                      : `${completedAssessments} dari ${totalAssessments} asesmen telah diselesaikan. Lanjutkan untuk gambaran yang lebih lengkap.`
-                    }
-                  </p>
-                  <div className="flex items-center gap-2 mt-3">
-                    <div className="flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full">
-                      <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-                      <span className="text-xs font-semibold text-emerald-700">SIAM Terhubung</span>
-                    </div>
-                    <span className="text-xs text-stone-400 font-medium">&middot;</span>
-                    <span className="text-xs text-stone-400 font-medium">Data terenkripsi end-to-end</span>
-                  </div>
-                </div>
-              </div>
+          <div className="lg:col-span-8 flex flex-col gap-4">
+            <section className="animate-fade-in-up">
+              <h2 className="text-[11px] uppercase tracking-[0.06em] text-stone-400 font-medium mb-2.5">
+                Direkomendasikan
+              </h2>
+              <RecommendationCard
+                assessmentName={nextRec.name}
+                assessmentType={nextRec.type}
+                description={nextRec.desc}
+                questionsCount={nextRec.questions}
+                estimatedMinutes={nextRec.minutes}
+                isDone={nextRecStatus.done}
+                onStart={onSelectAssessment}
+              />
             </section>
 
-            {/* Featured Assessment — GAD-7 */}
             <section className="animate-fade-in-up animate-fade-in-up-delay-1">
-              <h2 className="text-xs font-bold text-stone-400 uppercase tracking-widest mb-3">Direkomendasikan untuk kamu</h2>
-              <div
-                className="relative bg-teal-700 rounded-2xl p-6 md:p-8 overflow-hidden cursor-pointer group hover:bg-teal-800 transition-colors"
-                onClick={() => onSelectAssessment('gad7')}
-              >
-                <div className="absolute -bottom-16 -right-16 w-56 h-56 rounded-full bg-white/5 group-hover:bg-white/10 transition-colors" />
-                <div className="absolute -bottom-6 -right-6 w-32 h-32 rounded-full bg-white/5 group-hover:bg-white/10 transition-colors" />
-                <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                  <div>
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="px-2 py-0.5 bg-white/15 text-white text-[11px] font-bold rounded-full uppercase tracking-wide">
-                        Rekomendasi
-                      </span>
-                      {gad7Status.done && (
-                        <span className="px-2 py-0.5 bg-emerald-400/20 text-emerald-100 text-[11px] font-bold rounded-full">
-                          Selesai
-                        </span>
-                      )}
-                    </div>
-                    <h3 className="font-display font-bold text-xl md:text-2xl text-white mb-1">
-                      Asesmen Kecemasan (GAD-7)
-                    </h3>
-                    <p className="text-sm text-white/70 max-w-md leading-relaxed">
-                      Evaluasi tingkat kecemasan umum, stres harian, dan ketegangan psikis dalam 2 minggu terakhir.
-                    </p>
-                    <div className="flex items-center gap-3 mt-3">
-                      <span className="text-xs text-white/50 font-medium">7 pertanyaan</span>
-                      <span className="text-xs text-white/50">&middot;</span>
-                      <span className="text-xs text-white/50 font-medium">~2 menit</span>
-                    </div>
-                  </div>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); onSelectAssessment('gad7'); }}
-                    className="shrink-0 bg-white text-teal-700 font-bold text-sm px-6 py-3 rounded-xl hover:bg-stone-50 active:scale-95 transition-all shadow-sm"
-                  >
-                    {gad7Status.done ? 'Ulangi Tes' : 'Mulai Tes'}
-                  </button>
-                </div>
-              </div>
-            </section>
-
-            {/* Other Assessments Grid */}
-            <section className="animate-fade-in-up animate-fade-in-up-delay-2">
-              <h2 className="text-xs font-bold text-stone-400 uppercase tracking-widest mb-3">Asesmen lainnya</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
-                {/* PHQ-9 Card */}
-                <div className="bg-white rounded-2xl p-5 border border-stone-200 hover:border-teal-300 hover:shadow-md transition-all group">
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="w-10 h-10 bg-rose-50 text-rose-500 rounded-xl flex items-center justify-center">
-                      <MoodBadIcon className="w-5 h-5" />
-                    </div>
-                    {phq9Status.done && (
-                      <span className="px-2 py-0.5 bg-emerald-50 text-emerald-700 text-[11px] font-bold rounded-full border border-emerald-200">
-                        Selesai
-                      </span>
-                    )}
-                  </div>
-                  <h4 className="text-base font-bold text-stone-900 mb-1 group-hover:text-teal-700 transition-colors">
-                    Asesmen Depresi
-                  </h4>
-                  <p className="text-xs text-stone-500 mb-3 leading-relaxed">
-                    Skrining mendalam tanda depresi emosional (PHQ-9).
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-stone-400 font-medium">9 pertanyaan &middot; ~3 min</span>
-                    <button
-                      onClick={() => onSelectAssessment('phq9')}
-                      className="text-teal-700 font-bold text-xs px-3 py-1.5 rounded-lg border border-teal-200 hover:bg-teal-50 active:scale-95 transition-all"
-                    >
-                      {phq9Status.done ? 'Ulangi' : 'Mulai'}
-                    </button>
-                  </div>
-                </div>
-
-                {/* SRQ-20 Card */}
-                <div className="bg-white rounded-2xl p-5 border border-stone-200 hover:border-teal-300 hover:shadow-md transition-all group">
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="w-10 h-10 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center">
-                      <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
-                    </div>
-                    {srq20Status.done && (
-                      <span className="px-2 py-0.5 bg-emerald-50 text-emerald-700 text-[11px] font-bold rounded-full border border-emerald-200">
-                        Selesai
-                      </span>
-                    )}
-                  </div>
-                  <h4 className="text-base font-bold text-stone-900 mb-1 group-hover:text-teal-700 transition-colors">
-                    Skrining Umum WHO
-                  </h4>
-                  <p className="text-xs text-stone-500 mb-3 leading-relaxed">
-                    20 pertanyaan skrining mental emosional standar WHO (SRQ-20).
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-stone-400 font-medium">20 pertanyaan &middot; ~5 min</span>
-                    <button
-                      onClick={() => onSelectAssessment('srq20')}
-                      className="text-teal-700 font-bold text-xs px-3 py-1.5 rounded-lg border border-teal-200 hover:bg-teal-50 active:scale-95 transition-all"
-                    >
-                      {srq20Status.done ? 'Ulangi' : 'Mulai'}
-                    </button>
-                  </div>
-                </div>
-
-              </div>
+              <h2 className="text-[11px] uppercase tracking-[0.06em] text-stone-400 font-medium mb-2.5">
+                Asesmen tersedia
+              </h2>
+              <AssessmentGrid
+                assessments={assessmentCards}
+                jadwalBerikutnya={mockMahasiswa.jadwalBerikutnya}
+                onSelectAssessment={onSelectAssessment}
+              />
             </section>
           </div>
 
           {/* Right Column — Sidebar */}
-          <div className="lg:col-span-4 flex flex-col gap-5 animate-fade-in-up animate-fade-in-up-delay-3">
-
-            {/* Compact Profile Card */}
-            <div className="bg-white rounded-2xl p-5 border border-stone-200">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-11 h-11 bg-teal-700 rounded-full flex items-center justify-center shrink-0">
-                  <span className="text-white font-bold text-sm">MU</span>
-                </div>
-                <div className="min-w-0">
-                  <p className="font-semibold text-sm text-stone-900 truncate">Mahasiswa UB Brawijaya</p>
-                  <p className="text-xs text-stone-500">21500010023 &middot; FILKOM</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 bg-emerald-50 px-3 py-2 rounded-lg border border-emerald-100">
-                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-                <span className="text-xs font-semibold text-emerald-700">SIAK UB Tersinkronisasi</span>
-              </div>
-            </div>
-
-            {/* Assessment History Timeline */}
-            <div className="bg-white rounded-2xl p-5 border border-stone-200">
-              <h3 className="font-semibold text-sm text-stone-900 mb-4 flex items-center gap-2">
-                <HistoryIcon size={16} className="text-stone-400" />
-                Riwayat Asesmen
-              </h3>
-
-              {history.length === 0 ? (
-                <div className="text-center py-8">
-                  <div className="w-12 h-12 bg-stone-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <HistoryIcon size={20} className="text-stone-400" />
-                  </div>
-                  <p className="text-xs text-stone-500">Belum ada riwayat tes.</p>
-                </div>
-              ) : (
-                <div className="relative">
-                  <div className="absolute left-[7px] top-2 bottom-2 w-px bg-stone-200"></div>
-                  <div className="flex flex-col gap-4">
-                    {history.map((item) => (
-                      <div key={item.id} className="flex gap-3 relative">
-                        <div className={`w-3.5 h-3.5 rounded-full border-2 shrink-0 mt-0.5 z-10 ${
-                          item.status === 'Selesai' || item.status === 'Aman'
-                            ? 'bg-emerald-500 border-emerald-200'
-                            : 'bg-amber-500 border-amber-200'
-                        }`}></div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-semibold text-stone-900 truncate">{item.assessmentName}</p>
-                          <div className="flex items-center gap-2 mt-0.5">
-                            <span className="text-xs text-stone-400">{item.date}</span>
-                            {item.score !== undefined && (
-                              <span className="text-xs text-stone-500 font-medium bg-stone-100 px-1.5 py-0.5 rounded">
-                                Skor {item.score}
-                              </span>
-                            )}
-                          </div>
-                          {item.interpretation && (
-                            <span className={`inline-block mt-1 text-[11px] font-semibold px-2 py-0.5 rounded-full ${
-                              item.status === 'Perhatian'
-                                ? 'bg-amber-50 text-amber-700 border border-amber-200'
-                                : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                            }`}>
-                              {item.interpretation}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Counselor CTA */}
-            <div className="bg-white rounded-2xl p-5 border border-stone-200">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 bg-teal-50 rounded-full flex items-center justify-center">
-                  <SupportAgentIcon size={22} className="text-teal-700" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-sm text-stone-900">Butuh bicara?</h3>
-                  <p className="text-xs text-stone-500">Gratis &amp; rahasia untuk mahasiswa UB</p>
-                </div>
-              </div>
-              <button
-                onClick={onOpenCounselorModal}
-                className="w-full py-2.5 bg-teal-700 hover:bg-teal-800 text-white rounded-xl text-sm font-semibold active:scale-[0.98] transition-all"
-              >
-                Chat Konselor
-              </button>
-            </div>
+          <div className="lg:col-span-4 flex flex-col gap-4 animate-fade-in-up animate-fade-in-up-delay-2">
+            <ProfileCard
+              nama={mockMahasiswa.nama}
+              nim={mockMahasiswa.nim}
+              fakultas={mockMahasiswa.fakultas}
+              risikoLevel={getKondisiLevel()}
+              updatedDate={latestDate}
+            />
+            <HistoryCard riwayat={mockMahasiswa.riwayat} />
+            <CounselingCard onOpenModal={onOpenCounselorModal} />
           </div>
-
         </div>
       </main>
 
@@ -410,7 +291,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden">
             <div className="flex justify-between items-center px-6 py-4 border-b border-stone-200">
-              <h3 className="font-bold text-base text-stone-900">Panduan &amp; FAQ</h3>
+              <h3 className="font-bold text-base text-stone-900">Panduan & FAQ</h3>
               <button
                 onClick={() => setIsGuideModalOpen(false)}
                 className="text-stone-400 hover:text-stone-600 p-1.5 hover:bg-stone-100 rounded-lg transition-colors"
@@ -508,9 +389,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
       )}
 
-      {toast && (
-        <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />
-      )}
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </div>
   );
 };

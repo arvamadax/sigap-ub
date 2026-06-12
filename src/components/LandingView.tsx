@@ -311,21 +311,23 @@ export const LandingView: React.FC<LandingViewProps> = ({
               Alur Penggunaan Platform
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative">
-              <div className="hidden md:block absolute top-10 left-12 right-12 h-0.5 bg-stone-200 z-0"></div>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5 relative">
+              <div className="hidden lg:block absolute top-10 left-12 right-12 h-0.5 bg-stone-200 z-0"></div>
 
               {[
-                { num: '1', title: 'SSO Login', desc: 'Gunakan akun email UB Anda untuk login secara aman.' },
-                { num: '2', title: 'Isi Asesmen', desc: 'Pilih kuesioner yang sesuai dan jawab jujur dalam 5 menit.' },
-                { num: '3', title: 'Evaluasi Skor', desc: 'Dapatkan analisis instan dan rekomendasi tindak lanjut.' },
-                { num: '4', title: 'Konseling Gratis', desc: 'Jadwalkan sesi rahasia dengan psikolog jika diperlukan.' },
+                { num: '1', title: 'SSO Login', desc: 'Gunakan akun email UB untuk login secara aman.' },
+                { num: '2', title: 'Isi Asesmen', desc: 'Jawab kuesioner yang sesuai dalam 5 menit.' },
+                { num: '3', title: 'Evaluasi Skor', desc: 'Dapatkan analisis instan dan rekomendasi.' },
+                { num: '4', title: 'Konseling Gratis', desc: 'Jadwalkan sesi rahasia dengan psikolog.' },
+                { num: '5', title: 'Skrining Berkala', desc: 'Ulangi asesmen tiap semester untuk pantau perkembangan.' },
+                { num: '6', title: 'Konselor Notifikasi', desc: 'Konselor menerima triase otomatis untuk follow-up.' },
               ].map((step) => (
                 <div key={step.num} className="flex flex-col items-center text-center relative z-10 group">
-                  <div className="w-20 h-20 rounded-2xl bg-white border border-stone-200 flex items-center justify-center text-2xl font-black text-teal-700 mb-5 group-hover:-translate-y-2 group-hover:shadow-md group-hover:border-teal-300 transition-all duration-300">
+                  <div className="w-16 h-16 rounded-2xl bg-white border border-stone-200 flex items-center justify-center text-xl font-black text-teal-700 mb-4 group-hover:-translate-y-2 group-hover:shadow-md group-hover:border-teal-300 transition-all duration-300">
                     {step.num}
                   </div>
-                  <h4 className="font-bold text-base text-stone-900 mb-2">{step.title}</h4>
-                  <p className="text-sm text-stone-500 px-2 leading-relaxed">{step.desc}</p>
+                  <h4 className="font-bold text-sm text-stone-900 mb-1.5">{step.title}</h4>
+                  <p className="text-xs text-stone-500 px-1 leading-relaxed">{step.desc}</p>
                 </div>
               ))}
             </div>
