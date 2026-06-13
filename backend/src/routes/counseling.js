@@ -13,11 +13,13 @@ const bookingStore = [];
 
 // Slot mock — pada produksi diambil dari availability konselor di DB
 const availableSlots = [
-  { date: '2026-05-25', time: '09:00 - 10:30 WIB', available: true },
-  { date: '2026-05-25', time: '11:00 - 12:30 WIB', available: true },
-  { date: '2026-05-25', time: '13:30 - 15:00 WIB', available: false },
-  { date: '2026-05-26', time: '09:00 - 10:30 WIB', available: true },
-  { date: '2026-05-26', time: '11:00 - 12:30 WIB', available: true },
+  { date: '2026-06-20', time: '09:00 - 10:30 WIB', available: true },
+  { date: '2026-06-20', time: '11:00 - 12:30 WIB', available: true },
+  { date: '2026-06-20', time: '13:30 - 15:00 WIB', available: false },
+  { date: '2026-06-23', time: '09:00 - 10:30 WIB', available: true },
+  { date: '2026-06-23', time: '11:00 - 12:30 WIB', available: true },
+  { date: '2026-06-25', time: '09:00 - 10:30 WIB', available: true },
+  { date: '2026-06-25', time: '13:30 - 15:00 WIB', available: true },
 ];
 
 /**

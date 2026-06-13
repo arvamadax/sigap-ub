@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ViewType, HistoryItem, AssessmentType } from '../types';
 import { getSession } from '../services/auth';
+import { RiwayatItem } from '../data/mockData';
 import { SummaryBar } from './dashboard/SummaryBar';
 import { RecommendationCard } from './dashboard/RecommendationCard';
 import { AssessmentGrid } from './dashboard/AssessmentGrid';
@@ -122,6 +123,14 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   ];
 
   const latestDate = history.length > 0 ? history[0].date : '—';
+
+  const riwayatForCard: RiwayatItem[] = history.map((h) => ({
+    instrumen: h.assessmentName,
+    skor: h.score ?? 0,
+    tanggal: new Date(),
+    label: h.interpretation ?? h.status,
+    skorSebelumnya: [] as number[],
+  }));
 
   return (
     <div className="min-h-screen bg-stone-50 text-stone-900 font-sans flex flex-col">
@@ -282,7 +291,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               risikoLevel={getKondisiLevel()}
               updatedDate={latestDate}
             />
-            <HistoryCard riwayat={[]} />
+            <HistoryCard riwayat={riwayatForCard} />
             <CounselingCard onOpenModal={onOpenCounselorModal} />
           </div>
         </div>
@@ -290,7 +299,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
       {/* Footer */}
       <footer className="h-12 bg-white border-t border-stone-200 flex items-center px-6 md:px-10 justify-between max-w-[1200px] mx-auto w-full shrink-0">
-        <span className="text-xs text-stone-400">Platform Resmi Universitas Brawijaya &copy; 2025</span>
+        <span className="text-xs text-stone-400">Platform Resmi Universitas Brawijaya &copy; 2026</span>
         <span className="text-xs text-stone-400 font-medium">Tim &quot;Puding Coklat Pak Hambali&quot;</span>
       </footer>
 

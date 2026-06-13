@@ -141,7 +141,7 @@ export const KonselorView: React.FC<KonselorViewProps> = ({ onSetView, onLogout 
       </main>
 
       <footer className="h-12 bg-white border-t border-stone-200 flex items-center px-6 md:px-10 justify-between max-w-[1200px] mx-auto w-full shrink-0">
-        <span className="text-xs text-stone-400">Platform Resmi Universitas Brawijaya &copy; 2025</span>
+        <span className="text-xs text-stone-400">Platform Resmi Universitas Brawijaya &copy; 2026</span>
         <span className="text-xs text-stone-400 font-medium">Panel Konselor</span>
       </footer>
     </div>

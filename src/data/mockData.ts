@@ -22,18 +22,18 @@ export interface RiwayatItem {
 }
 
 export const mockMahasiswa: MahasiswaProfile = {
-  nama: 'Arva Mahendra',
-  nim: '21500010023',
+  nama: 'Arva Mada Jayastu',
+  nim: '255150300111053',
   fakultas: 'FILKOM',
   semester: 5,
   risikoLevel: 'sedang',
   asesmenSelesai: 2,
   asesmenTotal: 3,
-  jadwalBerikutnya: new Date('2026-06-26'),
+  jadwalBerikutnya: new Date('2026-06-25'),
   sesiKonseling: 0,
   riwayat: [
-    { instrumen: 'PHQ-9', skor: 12, tanggal: new Date('2023-09-05'), label: 'Depresi sedang', skorSebelumnya: [8, 10] },
-    { instrumen: 'SRQ-20', skor: 5, tanggal: new Date('2023-10-12'), label: 'Gejala ringan', skorSebelumnya: [7, 6] },
+    { instrumen: 'PHQ-9', skor: 12, tanggal: new Date('2026-05-05'), label: 'Depresi sedang', skorSebelumnya: [8, 10] },
+    { instrumen: 'SRQ-20', skor: 5, tanggal: new Date('2026-05-12'), label: 'Gejala ringan', skorSebelumnya: [7, 6] },
   ],
 };
 

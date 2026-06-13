@@ -15,22 +15,40 @@ const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
 // Pengguna dummy — pada produksi diganti query ke SIAM UB
 const mockUsers = [
   {
-    nim: '215150300111053',
-    password: 'sigap123',
+    nim: '255150300111053',
+    password: 'SIGAP-UB123',
     nama: 'Arva Mada Jayastu',
     email: 'arva@student.ub.ac.id',
     fakultas: 'FILKOM',
-    angkatan: 2021,
+    angkatan: 2025,
     role: 'mahasiswa',
   },
   {
-    nim: '215150301111027',
-    password: 'sigap123',
+    nim: '25515030111106',
+    password: 'SIGAP-UB123',
+    nama: 'Fristian Boas Nathaniel',
+    email: 'fristian@student.ub.ac.id',
+    fakultas: 'FILKOM',
+    angkatan: 2025,
+    role: 'mahasiswa',
+  },
+  {
+    nim: '255150301111027',
+    password: 'SIGAP-UB123',
     nama: 'Farrel Arzaqia Mecca',
     email: 'farrel@student.ub.ac.id',
     fakultas: 'FILKOM',
-    angkatan: 2021,
+    angkatan: 2025,
     role: 'mahasiswa',
+  },
+  {
+    nim: 'KN-001',
+    password: 'SIGAP-UB123',
+    nama: 'Dr. Sari Puspita, M.Psi.',
+    email: 'konselor@ub.ac.id',
+    fakultas: 'Psikologi',
+    angkatan: 0,
+    role: 'konselor',
   },
 ];
 
@@ -47,8 +65,8 @@ const mockUsers = [
  *           schema:
  *             type: object
  *             properties:
- *               nim: { type: string, example: "215150300111053" }
- *               password: { type: string, example: "sigap123" }
+ *               nim: { type: string, example: "255150300111053" }
+ *               password: { type: string, example: "SIGAP-UB123" }
  *     responses:
  *       200: { description: Login sukses, token dikembalikan }
  *       400: { description: Body request tidak valid }
@@ -62,7 +80,7 @@ router.post('/login', (req, res) => {
       return res.status(400).json({ error: 'NIM dan password wajib diisi' });
     }
 
-    const user = mockUsers.find((u) => u.nim === nim && u.password === password);
+    const user = mockUsers.find((u) => (u.nim === nim || u.email === nim) && u.password === password);
     if (!user) {
       return res.status(401).json({ error: 'Kombinasi NIM dan password salah' });
     }
