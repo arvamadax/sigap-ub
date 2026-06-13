@@ -41,6 +41,36 @@ app.use(express.json({ limit: BODY_LIMIT }));
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 
 // ---------- Healthcheck (public) ----------
+/**
+ * @openapi
+ * /api/health:
+ *   get:
+ *     tags: [System]
+ *     summary: Healthcheck publik
+ *     description: Endpoint publik (tanpa autentikasi) untuk memverifikasi bahwa backend berjalan normal. Digunakan oleh Docker healthcheck dan monitoring.
+ *     responses:
+ *       200:
+ *         description: Backend berjalan normal
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: ok
+ *                 version:
+ *                   type: string
+ *                   example: "1.0.0"
+ *                 uptime:
+ *                   type: number
+ *                   description: Uptime proses dalam detik
+ *                   example: 3600.5
+ *                 timestamp:
+ *                   type: number
+ *                   description: Unix timestamp saat ini (ms)
+ *                   example: 1749820800000
+ */
 app.get('/api/health', (_req, res) => {
   res.status(200).json({
     status: 'ok',
@@ -67,7 +97,10 @@ const swaggerSpec = swaggerJsdoc({
       },
     },
   },
-  apis: [path.join(__dirname, 'routes', '*.js')],
+  apis: [
+    path.join(__dirname, '*.js').split(path.sep).join('/'),
+    path.join(__dirname, 'routes', '*.js').split(path.sep).join('/'),
+  ],
 });
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 

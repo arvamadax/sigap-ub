@@ -28,8 +28,68 @@ const availableSlots = [
  *   post:
  *     tags: [Counseling]
  *     summary: Pesan sesi konseling baru
+ *     description: Membuat janji temu konseling pada slot yang tersedia. Slot akan ditandai tidak tersedia setelah berhasil dipesan.
  *     security:
  *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [date, time, category]
+ *             properties:
+ *               date:
+ *                 type: string
+ *                 format: date
+ *                 description: Tanggal sesi konseling (YYYY-MM-DD)
+ *                 example: "2026-06-20"
+ *               time:
+ *                 type: string
+ *                 description: Slot waktu sesi
+ *                 example: "09:00 - 10:30 WIB"
+ *               category:
+ *                 type: string
+ *                 description: Kategori hambatan psikologis
+ *                 example: "Kecemasan Akademik"
+ *               notes:
+ *                 type: string
+ *                 nullable: true
+ *                 description: Catatan opsional dari mahasiswa
+ *                 example: "Stres menjelang UAS"
+ *     responses:
+ *       201:
+ *         description: Booking berhasil dibuat
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 bookingId:
+ *                   type: string
+ *                   format: uuid
+ *                   example: "b2c3d4e5-f6a7-8901-bcde-f23456789012"
+ *                 status:
+ *                   type: string
+ *                   example: pending
+ *                 scheduledAt:
+ *                   type: string
+ *                   example: "2026-06-20 09:00 - 10:30 WIB"
+ *                 category:
+ *                   type: string
+ *                   example: "Kecemasan Akademik"
+ *                 notes:
+ *                   type: string
+ *                   nullable: true
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *       400:
+ *         description: Field wajib kosong atau slot sudah penuh
+ *       401:
+ *         description: Token tidak valid atau kadaluarsa
+ *       404:
+ *         description: Slot konseling tidak ditemukan
  */
 router.post('/book', authMiddleware, (req, res) => {
   try {
@@ -70,8 +130,34 @@ router.post('/book', authMiddleware, (req, res) => {
  *   get:
  *     tags: [Counseling]
  *     summary: Daftar slot konseling yang tersedia
+ *     description: Mengembalikan semua slot konseling beserta status ketersediaan. Slot yang sudah dipesan akan memiliki available=false.
  *     security:
  *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Daftar slot konseling
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 slots:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       date:
+ *                         type: string
+ *                         format: date
+ *                         example: "2026-06-20"
+ *                       time:
+ *                         type: string
+ *                         example: "09:00 - 10:30 WIB"
+ *                       available:
+ *                         type: boolean
+ *                         example: true
+ *       401:
+ *         description: Token tidak valid atau kadaluarsa
  */
 router.get('/slots', authMiddleware, (_req, res) => {
   try {

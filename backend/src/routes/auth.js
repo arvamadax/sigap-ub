@@ -58,19 +58,71 @@ const mockUsers = [
  *   post:
  *     tags: [Auth]
  *     summary: Login simulasi SSO SIAM UB
+ *     description: Autentikasi pengguna dengan NIM/email dan password. Mengembalikan JWT token yang digunakan pada header Authorization untuk endpoint terlindungi.
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             required: [nim, password]
  *             properties:
- *               nim: { type: string, example: "255150300111053" }
- *               password: { type: string, example: "SIGAP-UB123" }
+ *               nim:
+ *                 type: string
+ *                 description: NIM mahasiswa atau email UB (mendukung kedua format)
+ *                 example: "arva@student.ub.ac.id"
+ *               password:
+ *                 type: string
+ *                 description: Password akun
+ *                 example: "SIGAP-UB123"
  *     responses:
- *       200: { description: Login sukses, token dikembalikan }
- *       400: { description: Body request tidak valid }
- *       401: { description: Kredensial salah }
+ *       200:
+ *         description: Login sukses, token dan data user dikembalikan
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *                   description: JWT token untuk autentikasi
+ *                   example: "eyJhbGciOiJIUzI1NiIs..."
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     nim:
+ *                       type: string
+ *                       example: "255150300111053"
+ *                     nama:
+ *                       type: string
+ *                       example: "Arva Mada Jayastu"
+ *                     fakultas:
+ *                       type: string
+ *                       example: "FILKOM"
+ *                     role:
+ *                       type: string
+ *                       enum: [mahasiswa, konselor]
+ *                       example: "mahasiswa"
+ *       400:
+ *         description: NIM dan password wajib diisi
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "NIM dan password wajib diisi"
+ *       401:
+ *         description: Kredensial salah
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Kombinasi NIM dan password salah"
  */
 router.post('/login', (req, res) => {
   try {
@@ -113,11 +165,43 @@ router.post('/login', (req, res) => {
  *   get:
  *     tags: [Auth]
  *     summary: Verifikasi JWT yang sedang aktif
+ *     description: Memvalidasi token JWT dari header Authorization dan mengembalikan payload user jika valid.
  *     security:
  *       - bearerAuth: []
  *     responses:
- *       200: { description: Token valid, data user dikembalikan }
- *       401: { description: Token tidak valid atau kadaluarsa }
+ *       200:
+ *         description: Token valid, data user dikembalikan
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     nim:
+ *                       type: string
+ *                       example: "255150300111053"
+ *                     nama:
+ *                       type: string
+ *                       example: "Arva Mada Jayastu"
+ *                     fakultas:
+ *                       type: string
+ *                       example: "FILKOM"
+ *                     role:
+ *                       type: string
+ *                       enum: [mahasiswa, konselor]
+ *                       example: "mahasiswa"
+ *       401:
+ *         description: Token tidak valid atau kadaluarsa
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Token tidak valid atau kadaluarsa"
  */
 router.get('/verify', authMiddleware, (req, res) => {
   try {

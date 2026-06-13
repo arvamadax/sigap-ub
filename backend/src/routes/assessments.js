@@ -76,8 +76,62 @@ function classifyAssessment(type, score) {
  *   post:
  *     tags: [Assessments]
  *     summary: Submit jawaban kuesioner asesmen psikologis
+ *     description: Menerima jawaban kuesioner (PHQ-9, GAD-7, atau SRQ-20), menghitung skor total, dan mengklasifikasikan risiko berdasarkan cut-off klinis tervalidasi WHO.
  *     security:
  *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [type, answers]
+ *             properties:
+ *               type:
+ *                 type: string
+ *                 enum: [gad7, phq9, srq20]
+ *                 description: Tipe instrumen asesmen
+ *                 example: phq9
+ *               answers:
+ *                 type: array
+ *                 items:
+ *                   type: number
+ *                 description: Array skor jawaban per pertanyaan
+ *                 example: [0, 1, 2, 1, 3, 2, 1, 0, 2]
+ *     responses:
+ *       201:
+ *         description: Asesmen berhasil disubmit dan diklasifikasikan
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 assessmentId:
+ *                   type: string
+ *                   format: uuid
+ *                   example: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+ *                 type:
+ *                   type: string
+ *                   enum: [gad7, phq9, srq20]
+ *                   example: phq9
+ *                 score:
+ *                   type: number
+ *                   example: 12
+ *                 riskLevel:
+ *                   type: string
+ *                   enum: [rendah, sedang, tinggi, kritis]
+ *                   example: sedang
+ *                 interpretation:
+ *                   type: string
+ *                   example: Sedang
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                   example: "2026-06-13T10:30:00.000Z"
+ *       400:
+ *         description: Tipe asesmen atau format jawaban tidak valid
+ *       401:
+ *         description: Token tidak valid atau kadaluarsa
  */
 router.post('/submit', authMiddleware, (req, res) => {
   try {
@@ -118,8 +172,40 @@ router.post('/submit', authMiddleware, (req, res) => {
  *   get:
  *     tags: [Assessments]
  *     summary: Riwayat asesmen user yang sedang login
+ *     description: Mengembalikan seluruh riwayat asesmen yang pernah dilakukan oleh user yang sedang login, diurutkan dari yang terbaru.
  *     security:
  *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Daftar riwayat asesmen
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 history:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       assessmentId:
+ *                         type: string
+ *                         format: uuid
+ *                       type:
+ *                         type: string
+ *                         enum: [gad7, phq9, srq20]
+ *                       score:
+ *                         type: number
+ *                       riskLevel:
+ *                         type: string
+ *                         enum: [rendah, sedang, tinggi, kritis]
+ *                       interpretation:
+ *                         type: string
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *       401:
+ *         description: Token tidak valid atau kadaluarsa
  */
 router.get('/history', authMiddleware, (_req, res) => {
   try {
