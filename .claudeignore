@@ -1,0 +1,11 @@
+# Worktrees Claude Code — jangan di-scan
+.claude/worktrees/
+
+# Node artifacts
+node_modules/
+.next/
+
+# Python artifacts
+__pycache__/
+venv/
+.venv/
